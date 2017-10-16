@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zn"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<!--页头 start-->
+<head>
+    <div th:replace="common/header2:: common_header"></div>
+    <link rel="stylesheet" type="text/css" href="../js/jquery.codemirror/lib/codemirror.css"/>
+    <link rel="stylesheet" type="text/css" href="../js/jquery.codemirror/theme/ambiance.css"/>
+
+    <script src="../js/jquery.codemirror/lib/codemirror.js"></script>
+    <script src="../js/jquery.codemirror/mode/xml/xml.js"></script>
+    <script src="../js/jquery.codemirror/mode/css/css.js"></script>
+    <script src="../js/jquery.codemirror/mode/htmlmixed/htmlmixed.js"></script>
+    <script src="../js/jquery.codemirror/addon/edit/matchbrackets.js"></script>
+
+
+    <!--<link rel="stylesheet" href="../js/codemirror/addon/display/fullscreen.css"/>-->
+    <!--<script src="../js/codemirror/addon/display/fullscreen.js"></script>-->
+    <!--<script>-->
+        <!--window.onload = function() {-->
+            <!--window.editor = CodeMirror.fromTextArea(code, {-->
+                <!--mode: "javascript",-->
+                <!--lineNumbers: true,-->
+                <!--lineWrapping: true,-->
+                <!--extraKeys: {-->
+                    <!--//key binding for toggle full screen on/off-->
+                    <!--"F11": function(cm) {-->
+                        <!--cm.setOption("fullScreen", !cm.getOption("fullScreen"));-->
+                    <!--},-->
+                    <!--//key binding for switch full screen off-->
+                    <!--"Esc": function(cm) {-->
+                        <!--if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);-->
+                    <!--}-->
+                <!--}-->
+            <!--});-->
+        <!--};-->
+    <!--</script>-->
+</head>
+<!--页头 end-->
+<body>
+<!-- Fixed navbar -->
+<div th:include="common/navbar:: common_navbar"></div>
+
+<div id="cl-wrapper">
+    <div th:replace="common/sidebar:: common_sidebar"></div>
+
+
+    <!--content-start-->
+    <div class="container-fluid" id="pcont">
+        <div class="page-head">
+            <h2>指标信息管理</h2>
+            <ol class="breadcrumb">
+                <li><a href="#">指标管理</a></li>
+                <li class="active"><a href="#">指标信息管理</a></li>
+            </ol>
+        </div>
+        <div class="cl-mcont">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="block-flat">
+                        <div class="header">
+                            <button class="btn btn-success btn-flat" data-toggle="modal" data-target="#addModal"
+                                    onclick="getList()">添加指标信息
+                            </button>
+                        </div>
+                        <div class="content">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="datatable">
+                                    <thead>
+                                    <tr>
+                                        <th>指标名称</th>
+                                        <th>数据来源</th>
+                                        <th>计算脚本</th>
+                                        <th>备注</th>
+                                        <th>状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <!--<tr class="odd gradeX">
+                                        <td>Trident</td>
+                                        <td>Internet
+                                            Explorer 4.0</td>
+                                        <td>Win 95+</td>
+                                        <td class="center"> 4</td>
+                                        <td class="center"></td>
+                                    </tr>
+
+                                    <tr class="gradeU">
+                                        <td>Other browsers</td>
+                                        <td>All others</td>
+                                        <td>-</td>
+                                        <td class="center">-</td>
+                                        <td class="center">U</td>
+                                    </tr>-->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <!--content-end-->
+
+
+    <!-- add Modal -->
+    <div class="modal fade" id="addModal">
+        <div class="modal-dialog">
+            <div class="col-sm-12 col-md-12">
+                <div class="block-flat">
+                    <div class="header">
+                        <h4>添加指标信息</h4>
+                    </div>
+                    <div class="content">
+                        <form action="add" method="post" id="add_form">
+                            <div class="form-group">
+                                <label>指标名称</label>
+                                <input type="text" id="add_metric" name="metric" class="form-control" placeholder=""/>
+                            </div>
+                            <div class="form-group">
+                                <label>数据来源</label>
+                                <select id="add_topic_select" class="select2" style="width: 100%" multiple="multiple"></select>
+                                <input type="hidden" id="add_topic" name="topic"/>
+                            </div>
+                            <div class="form-group">
+                                <label>计算脚本</label>
+                                    <!-- Some random JS code placed in the textarea for demo purposes -->
+                                <textarea type="text" id="add_script_codemirror"  class="codemirror-textarea"></textarea>
+                                <input type="hidden" id="add_script" name="script" class="form-control"/>
+                            </div>
+
+                            <div class="form-group">
+                                <label>备注</label>
+                                <input type="text" id="add_remark" name="remarks" class="form-control"
+                                       placeholder="唯一"/>
+                            </div>
+                            <div class="form-group">
+                                <label>状态</label>
+                                <input type="checkbox" id="add_status" checked="checked" />
+                                <input id='addCheckBoxHidden' name='status' type='hidden' value='on' />
+                            </div>
+                            <div class="modal-footer" style="">
+                                <button type="button" class="btn btn-default btn-flat md-close " data-dismiss="modal">
+                                    取消
+                                </button>
+                                <button type="button" class="btn btn-success btn-flat md-close" data-dismiss="modal"
+                                        onclick="add()">添加
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- edit Modal -->
+    <div class="modal fade" id="editModal">
+        <div class="modal-dialog">
+            <div class="col-sm-12 col-md-12">
+                <div class="block-flat">
+                    <div class="header">
+                        <h4>修改指标信息</h4>
+                    </div>
+                    <div class="content">
+                        <form action="update" method="post" id="edit_form">
+
+                            <input type="hidden" id="edit_id" name="id"/>
+
+                            <div class="form-group">
+                                <label>指标名称</label>
+                                <input type="text" id="edit_metric" name="metric" class="form-control" placeholder=""/>
+                            </div>
+                            <div class="form-group">
+                                <label>数据来源</label>
+                                <select id="edit_topic_select"  class="select2" style="width: 100%" multiple="multiple"></select>
+                                <input type="hidden" id="edit_topic" name="topic" class="form-control"/>
+                            </div>
+                            <div class="form-group">
+                                <label>计算脚本</label>
+                                <textarea type="text" id="edit_script_codemirror"  class="codemirror-textarea"></textarea>
+                                <input type="hidden" id="edit_script" name="script" class="form-control"/>
+                            </div>
+
+                            <div class="form-group">
+                                <label>备注</label>
+                                <input type="text" id="edit_remark" name="remarks" class="form-control"
+                                       placeholder="唯一"/>
+                            </div>
+                            <div class="form-group">
+                                <label>状态</label>
+                                <input type="checkbox" id="edit_status" checked="checked"/>
+                                <input id='editCheckBoxHidden' name='status' type='hidden' value='on' />
+                            </div>
+                            <div class="modal-footer" style="">
+                                <button type="button" class="btn btn-default btn-flat md-close " data-dismiss="modal">
+                                    取消
+                                </button>
+                                <button type="button" class="btn btn-success btn-flat md-close" data-dismiss="modal"
+                                        onclick="update()">添加
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <div class="i-circle success"><i class="fa fa-warning"></i></div>
+                        <h4>
+                            <div id="del_info"></div>
+                            将要删除!
+                        </h4>
+                        <input id="del_id" type="hidden"/>
+                        <p id="check_msg"></p>
+                        <input id="check_id" type="hidden"/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" onclick="deleteOk()">确认</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
+    <!--遮罩-->
+    <div class="md-overlay"></div>
+
+
+</div>
+<!--页脚 start-->
+<div th:include="common/foot2:: common_foot"></div>
+<!--页脚 end-->
+
+<!--myjs-->
+<script type="application/javascript" src="../myjs/metric/metric.js"></script>
+</body>
+</html>

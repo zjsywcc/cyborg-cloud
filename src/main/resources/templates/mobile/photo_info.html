@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zn"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<!--页头 start-->
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>电子人云平台</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1"/>
+   <!-- <link rel="stylesheet" href="../css/webuploader.css"/>-->
+    <link rel="stylesheet" href="https://g.alicdn.com/msui/sm/0.6.2/css/sm.min.css"/>
+    <!--引入CSS-->
+    <link rel="stylesheet" type="text/css" href="../../static/css/webuploader.css"/>
+
+    <script type='text/javascript' src='https://cdn.bootcss.com/jquery/3.0.0-alpha1/jquery.js' charset='utf-8'></script>
+    <script type='text/javascript' src='https://g.alicdn.com/sj/lib/zepto/zepto.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='https://g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='https://cdn.staticfile.org/webuploader/0.1.0/webuploader.html5only.min.js' charset='utf-8'></script>
+
+
+</head>
+<!--页头 end-->
+<body>
+
+<div class="page-group">
+    <!-- 你的html代码 -->
+    <div class="page">
+        <header class="bar bar-nav">
+            <a class="icon icon-left pull-left back"></a>
+            <h1 class='title'>照片资料上传信息</h1>
+        </header>
+        <div class="content">
+            <input id="pic_id" type="hidden" th:value="${id}"/>
+
+            <div class="content-block-title">手持身份证照片</div>
+            <div class="card">
+                <div class="card-content">
+                    <div class="card-content-inner">
+                        <!--用来存放item-->
+                        <div id="identityList" class="uploader-list" style="display: flex;lex-wrap: wrap;"></div>
+                        <div id="addIdentity" class="button button-warning">选择图片</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-block-title">驾驶证照片</div>
+            <div class="card">
+                <div class="card-content">
+                    <div class="card-content-inner">
+                        <!--用来存放item-->
+                        <div id="driverList" class="uploader-list" style="display: flex;lex-wrap: wrap;"></div>
+                        <div id="addDriver" class="button button-warning">选择图片</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-block-title">
+                新购手机号证明:选填<br/>
+                如购买订单截图，手机营业厅证明等
+            </div>
+            <div class="card">
+                <div class="card-content">
+                    <div class="card-content-inner">
+                        <!--用来存放item-->
+                        <div id="mobList" class="uploader-list" style="display: flex;lex-wrap: wrap;"></div>
+                        <div id="addMob" class="button button-warning">选择图片</div>
+                    </div>
+                </div>
+            </div>
+
+         <!--   <div class="content-block-title">
+                其他身份证明:选填<br/>
+                如滴滴提现记录截图，滴滴接单订单截图等
+            </div>
+            <div class="card">
+                <div class="card-content">
+                    <div class="card-content-inner">
+                        &lt;!&ndash;用来存放item&ndash;&gt;
+                        <div id="otherList" class="uploader-list" style="display: flex;lex-wrap: wrap;"></div>
+                        <div id="addOther" class="button button-warning">选择图片</div>
+                    </div>
+                </div>
+            </div>-->
+
+
+
+            <div class="content-block">
+                <div class="row">
+                    <div class="col-100"><a href="javascript:submitpic();" class="button button-big button-fill button-warning">提交</a></div>
+                    <div style="text-align: center;"><a href="../mobile/about" >如何填写?</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="application/javascript" src="../myjs/mobile/photo_info.js"></script>
+
+
+</body>
+</html>

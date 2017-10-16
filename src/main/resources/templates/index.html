@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zn"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<!--页头 start-->
+<head>
+	<div th:replace="common/header2:: common_header"></div>
+</head>
+<!--页头 end-->
+<body>
+<!-- Fixed navbar -->
+<div th:include="common/navbar:: common_navbar"></div>
+	
+<div id="cl-wrapper">
+    <div th:replace="common/sidebar:: common_sidebar"></div>
+	
+	<div class="container-fluid" id="pcont">
+
+	  <div class="cl-mcont">
+		  <!--头部数据展示start-->
+		  <div class="stats_bar">
+
+			  <div class="butpro butstyle">
+				  <div class="sub"><h2>今日故障量</h2><span id="today_count"></span></div>
+				  <!--<div class="stat"><span class="up"> 13.5%</span></div>-->
+			  </div>
+			  <div class="butpro butstyle">
+				  <div class="sub"><h2>已解决故障量</h2><span id="today_finish"></span></div>
+				 <!-- <div class="stat"><span class="down"> 20.7%</span></div>-->
+			  </div>
+			  <div class="butpro butstyle">
+				  <div class="sub"><h2>未解决故障</h2><span id="today_unfinish"></span></div>
+				 <!-- <div class="stat"><span class="equal"> 0%</span></div>-->
+			  </div>
+			  <div class="butpro butstyle">
+				  <div class="sub"><h2>平均处理时间</h2><span id="today_avgTime"></span></div>
+				  <!--<div class="stat"><span class="spk2"></span></div>-->
+			  </div>
+			  <div class="butpro butstyle">
+				  <div class="sub"><h2>7日总故障量</h2><span id="seven_day_sum"></span></div>
+
+			  </div>
+			  <div class="butpro butstyle">
+				  <div class="sub"><h2>7日故障完成率</h2><span id="seven_day_finish"></span></div>
+				  <!--<div class="stat"><span class="spk3"></span></div>-->
+			  </div>
+
+		  </div>
+		  <!--头部数据展示end-->
+
+		  <!--图表展示start-->
+		  <div class="row">
+			  <div class="col-sm-6 col-md-6">
+				  <div class="block-flat">
+					  <div class="header">
+						  <h4>故障分布</h4>
+					  </div>
+					  <div class="content">
+						  <div id="show_pie" style="height: 300px; padding: 0px; position: relative;"></div>
+					  </div>
+				  </div>
+				  </div>
+				  <div class="col-sm-6 col-md-6">
+				  <div class="block-flat">
+					  <div class="header">
+						  <h4>处理时间</h4>
+					  </div>
+					  <div class="content">
+						  <div id="show_time" style="height: 300px; padding: 0px; position: relative;">
+						  </div>
+					  </div>
+				  </div>
+			  </div>
+           </div>
+		 <!-- <div class="row">
+			  <div class="col-sm-6 col-md-6">
+
+				  <div class="block-flat">
+					  <div class="header">
+						  <h3>Bar Chart</h3>
+					  </div>
+					  <div class="content">
+						  <div id="site_statistics21" style="height: 180px; padding: 0px; position: relative;"></div>
+					  </div>
+				  </div>
+				  </div>
+				  <div class="col-sm-6 col-md-6">
+				  <div class="block-flat">
+					  <div class="header">
+						  <h3>Full-Width Chart</h3>
+					  </div>
+					  <div class="content full-width">
+						  <div id="chart3-legend" class="legend-container"></div>
+						  <div id="chart3" style="height: 260px;"></div>
+					  </div>
+				  </div>
+			  </div>
+		  </div>-->
+
+
+
+		  <!--图表展示end-->
+
+	  </div>
+	
+	</div> 
+	
+</div>
+<!--页脚 start-->
+<div th:replace="common/foot2:: common_foot"></div>
+<script type="application/javascript" src="../myjs/index/index.js"></script>
+<!--页脚 end-->
+</body>
+</html>

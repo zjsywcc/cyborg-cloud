@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zn"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<!--页头 start-->
+<head>
+   <div th:replace="common/header2:: common_header"></div>
+</head>
+<!--页头 end-->
+<body>
+<!-- Fixed navbar -->
+<div th:include="common/navbar:: common_navbar"></div>
+
+<div id="cl-wrapper">
+    <div th:replace="common/sidebar:: common_sidebar"></div>
+
+
+
+    <div class="page-aside app tree">
+        <div class="fixed nano nscroller">
+            <div class="content">
+                <div class="header">
+                    <button class="navbar-toggle" data-target=".treeview" data-toggle="collapse" type="button">
+                        <span class="fa fa-chevron-down"></span>
+                    </button>
+                    <h5 class="page-title">功能模块</h5>
+                </div>
+                <ul id="module_tree" class="nav nav-list treeview collapse"></ul>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container-fluid" id="pcont">
+
+        <div class="cl-mcont">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12">
+                            <div class="block-flat">
+                                <div class="header">
+                                    <button class="btn btn-primary btn-flat md-trigger" data-modal="addModal">添加功能模块</button>
+                                </div>
+                                <div class="content">
+                                    <form id="edit_form" class="form-horizontal" role="form" method="post" action="../module/update">
+                                        <div class="form-group">
+                                            <input type="hidden" id="edit_id" name="id"/>
+                                            <label  class="col-sm-1 control-label">级别</label>
+                                            <div class="col-sm-5">
+                                                <select id="edit_level" name="level" class="form-control  select" onchange="findByLevelEdit('edit_level')">
+                                                    <option value="0">一级</option>
+                                                    <option value="1">二级</option>
+                                                    <option value="2">三级</option>
+                                                </select>
+                                                </div>
+
+                                            <label class="col-sm-1 control-label">上级模块</label>
+                                            <div class="col-sm-5">
+                                                <select id="edit_father" name="father" class="form-control"></select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-1 control-label">模块名称</label>
+                                            <div class="col-sm-5">
+                                                <input type="text" class="form-control" id="edit_name" name="name" placeholder="模块名称"/>
+                                            </div>
+                                            <label class="col-sm-1 control-label">访问路径</label>
+                                            <div class="col-sm-5">
+                                                <input type="text" class="form-control" id="edit_url" name="url" placeholder="URL"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label  class="col-sm-1 control-label">图标</label>
+                                            <div class="col-sm-5">
+                                                <input type="text" class="form-control" id="edit_ico" name="ico" placeholder="图标"/>
+                                            </div>
+                                            <label  class="col-sm-1 control-label">KEY</label>
+                                            <div class="col-sm-5">
+                                                <input type="text" class="form-control" id="edit_key" name="key" placeholder="Key"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label  class="col-sm-1 control-label">排序</label>
+                                            <div class="col-sm-5">
+                                                <input type="number" class="form-control" id="edit_sort" name="sort" placeholder="排序"/>
+                                            </div>
+                                            <label  class="col-sm-1 control-label">说明</label>
+                                            <div class="col-sm-5">
+                                                <input type="text" class="form-control" id="edit_remark" name="remark" placeholder="备注"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-offset-5 col-sm-5">
+                                                <button type="button" class="btn btn-primary" onclick="update()">修改</button>
+                                                <button type="button" class="btn btn-danger" onclick="deleteModal()">删除</button>
+                                                <button class="btn btn-default">取消</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+    </div>
+    </div>
+
+
+
+
+
+
+    <!-- add Modal -->
+    <div class="md-modal" id="addModal">
+        <div class="md-content">
+            <div class="modal-header">
+                <h4>添加功能模块</h4>
+                <button type="button" class="close md-close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            </div>
+            <div class="modal-body form">
+                <div class="form-group col-sm-6 col-md-6">
+                    <label>级别</label>
+                    <select id="add_level" name="level" class="form-control select" onchange="findByLevel('add_level')">
+                        <option value="0">一级</option>
+                        <option value="1">二级</option>
+                        <option value="2">三级</option>
+                    </select>
+                </div>
+                <div class="form-group col-sm-6 col-md-6">
+                    <label>上级模块</label>
+                    <select id="add_father" name="father" class="form-control"></select>
+                </div>
+                <div class="form-group col-sm-6 col-md-6">
+                    <label>功能模块名称</label>
+                    <input type="text" id="add_name" name="name" class="form-control" placeholder=""/>
+                </div>
+                <div class="form-group col-sm-6 col-md-6">
+                    <label>访问路径</label>
+                    <input type="text" id="add_url" name="url" class="form-control" placeholder=""/>
+                </div>
+                <div class="form-group col-sm-6 col-md-6">
+                    <label>图标</label>
+                    <input type="text" id="add_ico" name="ico" class="form-control" placeholder=""/>
+                </div>
+                <div class="form-group col-sm-6 col-md-6">
+                    <label>key</label>
+                    <input type="text" id="add_key" name="key" class="form-control" placeholder="唯一"/>
+                </div>
+                <div class="form-group col-sm-6 col-md-6">
+                    <label>排序</label>
+                    <input type="number" id="add_sort" min="0"  name="sort" class="form-control" placeholder="大于0的数值"/>
+                </div>
+                <div class="form-group col-sm-6 col-md-6">
+                    <label>说明</label>
+                    <input type="text" id="add_remark" name="remark" class="form-control" placeholder="唯一"/>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-flat md-close" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary btn-flat md-close" data-dismiss="modal" onclick="add()">添加</button>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <div class="i-circle success"><i class="fa fa-warning"></i></div>
+                        <h4><div id="del_info"></div>将要删除!</h4>
+                        <input id="del_id" type="hidden"/>
+                        <p id="check_msg"></p>
+                        <input id="check_id" type="hidden"/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" onclick="deleteOk()">确认</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
+
+
+
+    <!--遮罩-->
+    <div class="md-overlay"></div>
+
+
+
+<!--页脚 start-->
+<div th:include="common/foot2:: common_foot"></div>
+    </div>
+<!--页脚 end-->
+
+<!--myjs-->
+<script type="application/javascript" src="../myjs/module/index.js"></script>
+</body>
+</html>

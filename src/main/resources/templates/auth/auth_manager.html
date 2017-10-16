@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zn"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3" xmlns="http://www.w3.org/1999/html">
+<!--页头 start-->
+<head>
+   <div th:replace="common/header2:: common_header"></div>
+</head>
+<!--页头 end-->
+<body>
+<!-- Fixed navbar -->
+<div th:include="common/navbar:: common_navbar"></div>
+
+<div id="cl-wrapper">
+    <div th:replace="common/sidebar:: common_sidebar"></div>
+
+
+    <!--content-start-->
+    <div class="container-fluid" id="pcont">
+    <div class="page-head">
+        <h2>故障管理</h2>
+        <ol class="breadcrumb">
+            <li><a href="#">故障管理</a></li>
+            <li class="active"><a href="#">故障上报</a></li>
+        </ol>
+    </div>
+    <div class="cl-mcont">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="block-flat">
+
+
+
+                        <div class="form-group">
+
+                            <div class="col-sm-3">
+                                <input id="search_start" type="text"  readonly="true"  class="form-control datetime"  placeholder="开始时间"/>
+                            </div>
+                            <div class="col-sm-3">
+                                <input id="search_end" type="text"  readonly="true" class="form-control datetime" placeholder="结束时间"/>
+                            </div>
+                            <div class="col-sm-6">
+                                <button class="btn btn-warning btn-flat md-trigger" onclick="search()">查询</button>
+                                <button class="btn btn-success btn-flat md-trigger" onclick="exportExcel()">导出</button>
+                                <button class="btn btn-info btn-flat md-trigger" data-toggle="modal" data-target="#addModal">上报故障</button>
+                            </div>
+                        </div>
+
+
+                    <div class="content">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="datatable" >
+                                <thead>
+                                <tr>
+                                    <th>客户</th>
+                                    <th>手机号</th>
+                                    <th>故障描述</th>
+                                    <th>故障时间</th>
+                                    <th>指派人</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <!--<tr class="odd gradeX">
+                                    <td>Trident</td>
+                                    <td>Internet
+                                        Explorer 4.0</td>
+                                    <td>Win 95+</td>
+                                    <td class="center"> 4</td>
+                                    <td class="center"></td>
+                                </tr>
+
+                                <tr class="gradeU">
+                                    <td>Other browsers</td>
+                                    <td>All others</td>
+                                    <td>-</td>
+                                    <td class="center">-</td>
+                                    <td class="center">U</td>
+                                </tr>-->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    </div>
+
+<!--content-end-->
+
+
+    <!-- add Modal -->
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>上报故障</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group col-sm-6 col-md-6">
+                        <label>客户名称</label>
+                        <input  id="add_client" class="select2"/>
+                    </div>
+
+                    <div class="form-group col-sm-6 col-md-6">
+                        <label>联系方式</label>
+                        <input id="add_phone" type="text"  name="phone" class="form-control" placeholder=""/>
+                    </div>
+
+                    <div class="form-group col-sm-6 col-md-6">
+                        <label>故障发生时间</label>
+                        <div class="input-group date datetime" data-show-meridian="true" data-start-view="0"  data-date-format="yyyy-mm-dd HH:ii" data-link-field="dtp_input1">
+                            <input id="add_time" class="form-control" size="16" type="text" value="" />
+                            <span class="input-group-addon btn btn-primary"><span class="glyphicon glyphicon-th"></span></span>
+
+                        </div>
+                    </div>
+
+                    <div class="form-group col-sm-6 col-md-6">
+                        <label>故障现象</label>
+                        <select id="add_show" class="form-control select">
+                            <option value="断网">断网</option>
+                            <option value="网络缓慢">网络缓慢</option>
+                            <option value="指定IP无法访问">指定IP无法访问</option>
+                            <option value="端口异常">端口异常</option>
+                            <option value="DNS异常">DNS异常</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>其他故障现象</label>
+                        <textarea id="add_other" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>故障原因</label>
+                        <textarea id="add_reasion" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group col-sm-6 col-md-6">
+                        <label>受理人</label>
+                        <input id="add_worker" type="text"  name="name" class="form-control" placeholder=""/>
+                    </div>
+
+                    <div class="form-group col-sm-6 col-md-6">
+                        <label>上行OLT</label>
+                        <input id="add_olt" type="text"  name="remark" class="form-control" placeholder=""/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" onclick="add()">确认</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
+
+    <!-- add Trace Modal -->
+    <div class="md-modal  md-effect-10" id="addTraceModal">
+        <div class="md-content">
+            <div class="modal-header" style="height: 10px;">
+                <button type="button" class="close md-close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group" style="overflow:scroll;height: 400px;">
+                <ul id="tracelist" class="timeline">
+                 </ul>
+                </div>
+                <div class="form-group">
+                    <label>跟踪描述</label>
+                    <input id="add_trace_report" type="hidden"/>
+                    <input id="add_trace_show" type="text"  class="form-control" placeholder=""/>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-primary btn-flat" onclick="addTrace()">添加</button>
+                </div>
+
+            </div>
+            <!--<div class="modal-footer">
+                <button type="button" class="btn btn-default btn-flat md-close" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary btn-flat md-close" data-dismiss="modal" onclick="add()">添加</button>
+            </div>-->
+        </div>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="checkModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                   <h3>啦啦</h3> test
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <div class="i-circle success"><i class="fa fa-check"></i></div>
+                        <h4>故障已修复!</h4>
+                        <p id="check_msg"></p>
+                        <input id="check_id" type="hidden"/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" onclick="checkedOK()">确认</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
+    <!--遮罩-->
+    <div class="md-overlay"></div>
+
+
+
+
+</div>
+<!--页脚 start-->
+<div th:include="common/foot2:: common_foot"></div>
+<!--页脚 end-->
+
+<!--myjs-->
+<script type="application/javascript" src="../myjs/unicom/report/index.js"></script>
+</body>
+</html>

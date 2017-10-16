@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zn"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<!--页头 start-->
+<head>
+    <div th:replace="common/header2:: common_header"></div>
+    <!--<link rel="stylesheet" href="../js/codemirror/addon/display/fullscreen.css"/>-->
+    <!--<script src="../js/codemirror/addon/display/fullscreen.js"></script>-->
+    <!--<script>-->
+    <!--window.onload = function() {-->
+    <!--window.editor = CodeMirror.fromTextArea(code, {-->
+    <!--mode: "javascript",-->
+    <!--lineNumbers: true,-->
+    <!--lineWrapping: true,-->
+    <!--extraKeys: {-->
+    <!--//key binding for toggle full screen on/off-->
+    <!--"F11": function(cm) {-->
+    <!--cm.setOption("fullScreen", !cm.getOption("fullScreen"));-->
+    <!--},-->
+    <!--//key binding for switch full screen off-->
+    <!--"Esc": function(cm) {-->
+    <!--if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);-->
+    <!--}-->
+    <!--}-->
+    <!--});-->
+    <!--};-->
+    <!--</script>-->
+
+</head>
+<!--页头 end-->
+<body>
+<!-- Fixed navbar -->
+<div th:include="common/navbar:: common_navbar"></div>
+
+<div id="cl-wrapper">
+    <div th:replace="common/sidebar:: common_sidebar"></div>
+
+
+    <!--content-start-->
+    <div class="container-fluid" id="pcont">
+        <div class="page-head">
+            <h2>申请记录管理</h2>
+            <ol class="breadcrumb">
+                <li><a href="#">记录管理</a></li>
+                <li class="active"><a href="#">申请记录管理</a></li>
+            </ol>
+        </div>
+        <div class="cl-mcont">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="block-flat">
+                        <div class="header">
+                            <h3>搜索</h3>
+                        </div>
+                        <div class="content">
+                            <form class="form-horizontal group-border-dashed" action="#" style="border-radius: 0px;">
+                                <div class="form-group">
+
+                                    <div class="col-sm-2">
+                                        <label class="control-label">姓名</label>
+                                        <input type="text" id="searchName" class="form-control"/>
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        <label class="control-label">登录手机</label>
+                                        <input type="text" id="searchLoginPhone" class="form-control"/>
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        <label class="control-label">注册手机</label>
+                                        <input type="text" id="searchPhone" class="form-control"/>
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        <label class=" control-label">身份证号</label>
+                                        <input type="text" id="searchIDCard" class="form-control"/>
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        <label class=" control-label">业务线</label>
+                                        <select id="selectDriverType" class="form-control">
+                                            <option></option>
+                                            <option>快车</option>
+                                            <option>专车</option>
+                                            <option>出租车</option>
+                                            <option>代驾</option>
+                                            <option>试驾</option>
+                                            <option>租车</option>
+                                            <option>顺风车</option>
+                                        </select>
+                                        <input type="hidden" id="searchDriverType" class="form-control"/>
+                                    </div>
+
+                                    <label class="control-label">创建日期</label>
+                                    <div class="input-group date datetime col-sm-2" data-min-view="2"
+                                         data-date-format="yyyy-mm-dd">
+                                        <input id="searchCreateDate" class="form-control" size="16" type="text"
+                                               readonly="readonly"/>
+                                        <span class="input-group-addon btn btn-primary"><span
+                                                class="glyphicon glyphicon-th"></span></span>
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        <label class="control-label">发送状态</label>
+                                        <select id="selectSendStatus" class="form-control">
+                                            <option></option>
+                                            <option value="0">未发送</option>
+                                            <option value="1">已发送</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        <label class="control-label">策略</label>
+                                        <select id="selectStrategyStatus" class="form-control">
+                                            <option></option>
+                                            <option value="0">未跑</option>
+                                            <option value="1">已跑</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        <label class="control-label">通过状态</label>
+                                        <select id="selectResult" class="form-control">
+                                            <option></option>
+                                            <option value="0">未通过</option>
+                                            <option value="1">已通过</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        <label class="control-label">新手机号购买凭证</label>
+                                        <select id="selectNewPhoneProof" class="form-control">
+                                            <option></option>
+                                            <option value="0">为空</option>
+                                            <option value="1">非空</option>
+                                        </select>
+                                    </div>
+
+
+
+                                </div>
+                            </form>
+                        </div>
+                        <div class="content">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="datatable">
+                                    <thead>
+                                    <tr>
+                                        <th>姓名</th>
+                                        <th>登录手机</th>
+                                        <th>注册手机</th>
+                                        <th>身份证号</th>
+                                        <th>业务线</th>
+                                        <th>城市</th>
+                                        <th>车牌号</th>
+                                        <th>是否能修改手机号</th>
+                                        <th>客户话术</th>
+                                        <th>创建时间</th>
+                                        <th>短信通知</th>
+                                        <th>详细信息</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--content-end-->
+
+
+    <!-- add Modal -->
+    <div class="modal fade" id="addModal">
+        <div class="modal-dialog">
+            <div class="col-sm-12 col-md-12">
+                <div class="block-flat">
+                    <div class="header">
+                        <h4>添加记录信息</h4>
+                    </div>
+                    <div class="content">
+                        <form action="add" method="post" id="add_form">
+                            <ul class="nav nav-tabs">
+                                <li class="active"><a href="#addBasicInfo" data-toggle="tab">基本信息</a></li>
+                                <li><a href="#addProfileInfo" data-toggle="tab">登录信息</a></li>
+                                <li><a href="#addPhoneInfo" data-toggle="tab">注册手机号信息</a></li>
+                                <li><a href="#addPhotoInfo" data-toggle="tab">照片资料信息</a></li>
+                            </ul>
+                            <div class="tab-content">
+                                <div class="tab-pane active cont" id="addBasicInfo">
+                                    <div class="form-group">
+                                        <label>姓名</label>
+                                        <input type="text" id="add_name" name="name" class="form-control"
+                                               placeholder=""/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>城市</label>
+                                        <input type="text" id="add_city" name="city" class="form-control"
+                                               placeholder=""/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>注册手机</label>
+                                        <input type="text" id="add_phone" name="oldPhone" class="form-control"
+                                               placeholder=""/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>新手机号</label>
+                                        <input type="text" id="add_newPhone" name="newPhone" class="form-control"
+                                               placeholder=""/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>车牌号</label>
+                                        <input type="text" id="add_plateNo" name="plateNo" class="form-control"
+                                               placeholder=""/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>身份证号</label>
+                                        <input type="text" id="add_idCardNo" name="idCardNo" class="form-control"
+                                               placeholder=""/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>银行卡号后6位</label>
+                                        <input type="text" id="add_bankCard" name="bankCard" class="form-control"
+                                               placeholder=""/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>是否绑定过车辆</label>
+                                        <input type="checkbox" id="add_bindStatus" checked="checked"/>
+                                        <input id='addCheckBoxHidden' name='bindStatus' type='hidden' value='是'/>
+                                    </div>
+                                </div>
+                                <div class="tab-pane cont" id="addProfileInfo">
+                                    <div class="form-group">
+                                        <label>重新登录方式</label>
+                                        <input type="text" id="add_loginStatus" name="loginStatus" class="form-control"
+                                               placeholder=""/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>第一次使用时间</label>
+                                        <input type="text" id="add_startTime" name="startTime" class="form-control"
+                                               placeholder=""/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>最后使用时间</label>
+                                        <input type="text" id="add_endTime" name="endTime" class="form-control"
+                                               placeholder=""/>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="addPhoneInfo">
+                                    <div class="form-group">
+                                        <label>原手机失效时间</label>
+                                        <input type="text" id="add_phoneDisableTime" name="phoneDisableTime"
+                                               class="form-control"
+                                               placeholder=""/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>原手机失效地</label>
+                                        <input type="text" id="add_phoneDisableLoc" name="phoneDisableLoc"
+                                               class="form-control"
+                                               placeholder=""/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>原手机失效原因</label>
+                                        <input type="text" id="add_phoneDisableReason" name="phoneDisableReason"
+                                               class="form-control"
+                                               placeholder=""/>
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="addPhotoInfo">
+                                    <div class="form-group">
+                                        <label>手持身份证照片</label>
+                                        <input type="file" id="add_picWithIDCard" name="picWithIDCard"
+                                               class="form-control"
+                                               placeholder=""/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>驾驶证照片</label>
+                                        <input type="file" id="add_picDriveLicense" name="picDriveLicense"
+                                               class="form-control"
+                                               placeholder=""/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>新手机号购买凭证</label>
+                                        <input type="file" id="add_picNewPhoneProof" name="picNewPhoneProof"
+                                               class="form-control"
+                                               placeholder=""/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>其他证明身份的照片</label>
+                                        <input type="file" id="add_picOtherProof" name="picOtherProof"
+                                               class="form-control"
+                                               placeholder=""/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>能否更改手机号</label>
+                                        <input type="checkbox" id="add_status" checked="checked"/>
+                                        <input id='addStatusHidden' name='status' type='hidden'/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer" style="">
+                                <button type="button" class="btn btn-default btn-flat md-close "
+                                        data-dismiss="modal">
+                                    取消
+                                </button>
+                                <button type="button" class="btn btn-success btn-flat md-close" data-dismiss="modal"
+                                        onclick="add()">添加
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- edit Modal -->
+    <div class="modal fade" id="editModal">
+        <div class="modal-dialog  modal-lg">
+            <div class="col-md-12 col-sm-12">
+                <div class="block-flat">
+                    <div class="header">
+                        <h4>详细记录信息</h4>
+                    </div>
+                    <div class="content">
+                        <form action="update" method="post" id="edit_form">
+                            <input type="hidden" id="edit_id" name="id"/>
+                            <ul class="nav nav-tabs">
+                                <li class="active"><a href="#basicInfo" data-toggle="tab">基本信息</a></li>
+                                <li><a href="#profileInfo" data-toggle="tab">登录信息</a></li>
+                                <li><a href="#phoneInfo" data-toggle="tab">注册手机号信息</a></li>
+                                <li><a href="#idPhoto" data-toggle="tab">手持身份证照片</a></li>
+                                <li><a href="#licensePhoto" data-toggle="tab">驾驶证照片</a></li>
+                                <li><a href="#newPhonePhoto" data-toggle="tab">新手机购买凭证照片</a></li>
+                                <li><a href="#otherPhoto" data-toggle="tab">其他凭证照片</a></li>
+                            </ul>
+                            <div class="tab-content">
+                                <div class="tab-pane active cont form-horizontal" id="basicInfo">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">姓名</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" id="edit_name" name="name" class="form-control"
+                                                   placeholder=""/>
+                                        </div>
+                                        <label class="col-sm-2 control-label">城市</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" id="edit_city" name="city" class="form-control"
+                                                   placeholder=""/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">注册手机</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" id="edit_phone" name="oldPhone" class="form-control"
+                                                   placeholder=""/>
+                                        </div>
+                                        <label class="col-sm-2 control-label">新手机号</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" id="edit_newPhone" name="newPhone" class="form-control"
+                                                   placeholder=""/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">车牌号</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" id="edit_plateNo" name="plateNo" class="form-control"
+                                                   placeholder=""/>
+                                        </div>
+                                        <label class="col-sm-2 control-label">身份证号</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" id="edit_idCardNo" name="idCardNo" class="form-control"
+                                                   placeholder=""/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">银行卡号后6位</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" id="edit_bankCard" name="bankCard" class="form-control"
+                                                   placeholder=""/>
+                                        </div>
+                                        <label class="col-sm-2 control-label">是否绑定过车辆</label>
+                                        <div class="col-sm-4">
+                                            <input type="checkbox" class="icheck" id="edit_bindStatus"
+                                                   checked="checked"/>
+                                            <input id='editCheckBoxHidden' name='bindStatus' type='hidden' value='是'/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">业务线</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" id="edit_driverType" name="driverType" class="form-control"
+                                                   placeholder=""/>
+                                        </div>
+                                        <label class="col-sm-2 control-label">客户话术</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" id="edit_terminology" name="terminology" class="form-control"
+                                                   placeholder=""/>
+                                        </div>
+                                    </div>
+                                    <hr/>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">策略是否已经进行过操作</label>
+                                        <div class="col-sm-4">
+                                            <input type="checkbox" class="icheck" id="edit_status" checked="checked"/>
+                                            <input id='editStatusHidden' name='status' type='hidden'/>
+                                        </div>
+                                        <label class="col-sm-2 control-label">能否更改手机号</label>
+                                        <div class="col-sm-4">
+                                            <input type="checkbox" class="icheck" id="edit_result" checked="checked"/>
+                                            <input id='editResultHidden' name='result' type='hidden'/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">passport中最终有否修改</label>
+                                        <div class="col-sm-4">
+                                            <input type="checkbox" class="icheck" id="edit_updateMobStatus" checked="checked"/>
+                                            <input id='editUpdateMobStatusHidden' name='updateMobStatus' type='hidden'/>
+                                        </div>
+                                        <label class="col-sm-2 control-label">人工是否已经处理</label>
+                                        <div class="col-sm-4">
+                                            <input type="checkbox" class="icheck" id="edit_checked" checked="checked"/>
+                                            <input id='editCheckedHidden' name='checked' type='hidden'/>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="tab-pane cont form-horizontal" id="profileInfo">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">重新登录方式</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" id="edit_loginStatus" name="loginStatus"
+                                                   class="form-control"
+                                                   placeholder=""/>
+                                        </div>
+                                        <label class="col-sm-2 control-label">重新登录时间</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" id="edit_loginTime" name="reLoginTime"
+                                                   class="form-control"
+                                                   placeholder=""/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">最后使用时间</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" id="edit_endTime" name="endTime" class="form-control"
+                                                   placeholder=""/>
+                                        </div>
+                                        <label class="col-sm-2 control-label">第一次使用时间</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" id="edit_startTime" name="startTime" class="form-control"
+                                                   placeholder=""/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane form-horizontal" id="phoneInfo">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">原手机失效时间</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" id="edit_phoneDisableTime" name="phoneDisableTime"
+                                                   class="form-control"
+                                                   placeholder=""/>
+                                        </div>
+                                        <label class="col-sm-2 control-label">原手机失效地</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" id="edit_phoneDisableLoc" name="phoneDisableLoc"
+                                                   class="form-control"
+                                                   placeholder=""/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">原手机失效原因</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" id="edit_phoneDisableReason" name="phoneDisableReason"
+                                                   class="form-control"
+                                                   placeholder=""/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane form-horizontal" id="idPhoto">
+                                    <div class="form-group">
+                                        <label>手持身份证照片</label>
+                                        <div id="picWithIDCard"></div>
+                                        <!--<input type="text" id="edit_picWithIDCard" name="picWithIDCard"-->
+                                        <!--class="form-control"-->
+                                        <!--placeholder=""/>-->
+                                    </div>
+                                </div>
+                                <div class="tab-pane form-horizontal" id="licensePhoto">
+                                    <div class="form-group">
+                                        <label>驾驶证照片</label>
+                                        <div id="picDriveLicense"></div>
+                                        <!--<input type="text" id="edit_picDriveLicense" name="picDriveLicense"-->
+                                        <!--class="form-control"-->
+                                        <!--placeholder=""/>-->
+                                    </div>
+                                </div>
+                                <div class="tab-pane form-horizontal" id="newPhonePhoto">
+                                    <div class="form-group">
+                                        <label>新手机号购买凭证</label>
+                                        <div id="picNewPhoneProof"></div>
+                                        <!--<input type="text" id="edit_picNewPhoneProof" name="picNewPhoneProof"-->
+                                        <!--class="form-control"-->
+                                        <!--placeholder=""/>-->
+                                    </div>
+                                </div>
+                                <div class="tab-pane form-horizontal" id="otherPhoto">
+                                    <div class="form-group">
+                                        <label>其他证明身份的照片</label>
+                                        <div id="picOtherProof"></div>
+                                        <!--<input type="text" id="edit_picOtherProof" name="picOtherProof"-->
+                                        <!--class="form-control"-->
+                                        <!--placeholder=""/>-->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer" style="">
+                                <!--<button type="hidden" class="btn btn-default btn-flat md-close "-->
+                                <!--data-dismiss="modal">-->
+                                <!--取消-->
+                                <!--</button>-->
+                                <button type="button" class="btn btn-success btn-flat md-close" data-dismiss="modal">确认
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <div class="i-circle success"><i class="fa fa-warning"></i></div>
+                        <h4>
+                            <div id="del_info"></div>
+                            将要删除!
+                        </h4>
+                        <input id="del_id" type="hidden"/>
+                        <p id="check_msg"></p>
+                        <input id="check_id" type="hidden"/>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-success" data-dismiss="modal" onclick="deleteOk()">确认</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
+    <!--遮罩-->
+    <div class="md-overlay"></div>
+
+
+</div>
+<!--页脚 start-->
+<div th:include="common/foot2:: common_foot"></div>
+<!--页脚 end-->
+
+<!--myjs-->
+<script type="application/javascript" src="../myjs/record/main.js"></script>
+</body>
+</html>
