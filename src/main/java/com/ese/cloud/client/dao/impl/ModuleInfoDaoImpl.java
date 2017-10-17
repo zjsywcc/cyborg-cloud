@@ -104,7 +104,7 @@ public class ModuleInfoDaoImpl implements ModuleInfoDao {
         try {
 
             Query query = new Query();
-            query.addCriteria(Criteria.where("id").in(ids));
+//            query.addCriteria(Criteria.where("id").in(ids));
             query.with(new Sort(Sort.Direction.ASC, "sort"));//降序排序
             return mongoTemplate.find(query, ModuleInfo.class, COLLECTION);
 
