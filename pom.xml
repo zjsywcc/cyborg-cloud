@@ -8,7 +8,7 @@
 	<version>1.0.0</version>
 	<packaging>war</packaging>
 
-	<name>unusualAcount</name>
+	<name>cyborg-cloud</name>
 	<description>Spring Boot with Thymeleaf</description>
 
 	<parent>
