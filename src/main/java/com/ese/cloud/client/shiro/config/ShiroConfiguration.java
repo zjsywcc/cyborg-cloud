@@ -60,6 +60,7 @@ public class ShiroConfiguration {
         filterChainDefinitionMap.put("/myjs/**", "anon");
         //登录验证接口
         filterChainDefinitionMap.put("/api/sms/**", "anon");
+        filterChainDefinitionMap.put("/appuser/**", "anon");
         filterChainDefinitionMap.put("/login/login", "anon");
         //注册接口
         filterChainDefinitionMap.put("/register", "anon");
