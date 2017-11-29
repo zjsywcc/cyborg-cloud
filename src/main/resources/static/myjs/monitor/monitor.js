@@ -25,6 +25,7 @@ $(document).ready(function () {
             },
             success: function (e) {
                 if (e.code == 0) {
+                   // console.log(e.data)
                     var emgPacket = JSON.parse(e.data);
                     refreshLoop(update, emgPacket, emgPacket.length);
                 } else {

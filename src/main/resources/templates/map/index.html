@@ -60,21 +60,6 @@
 <!--页脚 end-->
 
 <!--myjs-->
-<!--<script type="application/javascript" src="../myjs/monitor/monitor.js"></script>-->
+<script type="application/javascript" src="../myjs/map/location.js"></script>
 </body>
 </html>
-<script type="text/javascript">
-    // 百度地图API功能
-    var map = new BMap.Map("chartEMG");
-    var point = new BMap.Point(120.135858,30.256759 );
-    map.centerAndZoom(point, 16);
-
-    // 编写自定义函数,创建标注
-    function addMarker(point){
-        var marker = new BMap.Marker(point);
-        map.addOverlay(marker);
-    }
-    var point1=new BMap.Point(120.133271,30.255542);
-    addMarker(point);
-    addMarker(point1);
-</script>
