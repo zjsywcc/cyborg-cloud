@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zn"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3" xmlns="http://www.w3.org/1999/html">
+<!--页头 start-->
+<head>
+   <div th:replace="common/header2:: common_header"></div>
+</head>
+<!--页头 end-->
+<body>
+<!-- Fixed navbar -->
+<div th:include="common/navbar:: common_navbar"></div>
+
+<div id="cl-wrapper">
+    <div th:replace="common/sidebar:: common_sidebar"></div>
+
+
+    <!--content-start-->
+    <div class="container-fluid" id="pcont">
+    <div class="page-head">
+        <h2>角色管理</h2>
+        <ol class="breadcrumb">
+            <li><a href="#">系统管理</a></li>
+            <li class="active"><a href="#">角色管理</a></li>
+        </ol>
+    </div>
+    <div class="cl-mcont">
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="block-flat">
+
+
+
+                        <div class="form-group">
+                            <div class="col-sm-6">
+                                <button class="btn btn-info btn-flat md-trigger" data-toggle="modal" data-target="#addModal">添加角色</button>
+                            </div>
+                        </div>
+
+
+                    <div class="content">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="datatable" >
+                                <thead>
+                                <tr>
+                                    <th>名称</th>
+                                    <th>描述</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    </div>
+
+<!--content-end-->
+
+
+
+
+
+
+
+
+
+
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+
+            <div class="col-sm-12 col-md-12">
+                <div class="block-flat">
+                    <div class="header">
+                        <h4>添加角色</h4>
+                    </div>
+                    <div class="content">
+                        <form id="add_form" method="post" role="form">
+                            <div class="form-group">
+                                <label>角色名称</label>
+                                <input type="text" class="form-control" id="add_name" name="name" placeholder="角色名必须唯一"/>
+                            </div>
+
+                            <div class="form-group">
+                                <table class="">
+                                    <thead class="">
+                                    <tr>
+                                        <th>模块名称</th>
+                                        <th>添加</th>
+                                        <th>删除</th>
+                                        <th>修改</th>
+                                        <th>查看</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="add_permission">
+
+                                    <tr  th:each="obj: ${data}">
+
+                                        <td><strong th:text="${obj.name}"></strong></td>
+                                        <td><div class="switch switch-small"><input name="create" type="checkbox" th:value="${obj.id}" /></div></td>
+                                        <td><div class="switch switch-small"><input name="delete" type="checkbox" th:value="${obj.id}"/></div></td>
+                                        <td><div class="switch switch-small"><input name="update" type="checkbox" th:value="${obj.id}"/></div></td>
+                                        <td><div class="switch switch-small"><input name="view" type="checkbox" th:value="${obj.id}"/></div></td>
+                                    </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="form-group">
+                                <label>权限级别</label>
+                                <select id="add_level"  class="form-control" name="level">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>描述</label>
+                                <input type="text" class="form-control" id="add_des" name="description" placeholder="最长500个字符"/>
+                            </div>
+                            <div class="form-group">
+                                <label>备注</label>
+                                <input type="text" class="form-control" id="add_remark" name="remark" placeholder="最长500个字符"/>
+                            </div>
+
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                <button type="submit" class="btn btn-success">确认</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+
+            <div class="col-sm-12 col-md-12">
+                <div class="block-flat">
+                    <div class="header">
+                        <h4>修改角色</h4>
+                    </div>
+                    <div class="content">
+                        <form id="edit_form" method="post" role="form">
+                            <div class="form-group">
+                                <label>角色名称</label>
+                                <input type="hidden" class="form-control" id="edit_id" name="id"/>
+                                <input type="text" class="form-control" id="edit_name" name="name" placeholder="角色名必须唯一"/>
+                            </div>
+
+                            <div class="form-group">
+                                <table class="">
+                                    <thead class="">
+                                    <tr>
+                                        <th>模块名称</th>
+                                        <th>添加</th>
+                                        <th>删除</th>
+                                        <th>修改</th>
+                                        <th>查看</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="edit_permission">
+
+                                    <tr  th:each="obj: ${data}">
+
+                                        <td><strong th:text="${obj.name}"></strong></td>
+                                        <td><div class="switch switch-small"><input th:id="${'edit_create_'+obj.id}" name="create" type="checkbox" th:value="${obj.id}"/></div></td>
+                                        <td><div class="switch switch-small"><input th:id="${'edit_delete_'+obj.id}" name="delete" type="checkbox" th:value="${obj.id}"/></div></td>
+                                        <td><div class="switch switch-small"><input th:id="${'edit_update_'+obj.id}" name="update" type="checkbox" th:value="${obj.id}"/></div></td>
+                                        <td><div class="switch switch-small"><input th:id="${'edit_view_'+obj.id}" name="view" type="checkbox" th:value="${obj.id}"/></div></td>
+                                    </tr>
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+
+                            <div class="form-group">
+                                <label>权限级别</label>
+                                <select id="edit_level"  class="form-control" name="level">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>描述</label>
+                                <input type="text" class="form-control" id="edit_des" name="description" placeholder="最长500个字符"/>
+                            </div>
+                            <div class="form-group">
+                                <label>备注</label>
+                                <input type="text" class="form-control" id="edit_remark" name="remark" placeholder="最长500个字符"/>
+                            </div>
+
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                <button type="submit" class="btn btn-success">确认</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- deleteModal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="col-sm-12 col-md-12">
+                <div class="block-flat">
+                    <div class="header">
+                        <h4>确认删除角色</h4>
+                    </div>
+                    <div class="content">
+                        <input id="del_id" name="id" type="hidden"/>
+                        您确认删除角色:<label id="del_name"> </label>?
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="submit" class="btn btn-success" onclick="deleteOk()">确认</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!-- /.modal -->
+
+
+    <!--遮罩-->
+   <!-- <div class="md-overlay"></div>-->
+
+
+
+
+</div>
+<!--页脚 start-->
+<div th:include="common/foot2:: common_foot"></div>
+<!--页脚 end-->
+
+<!--myjs-->
+<script type="application/javascript" src="../myjs/auth/index.js"></script>
+</body>
+</html>

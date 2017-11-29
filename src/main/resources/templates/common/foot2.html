@@ -1,0 +1,257 @@
+
+
+
+
+
+<div th:fragment="common_foot" id= "common_foot">
+<script type="text/javascript" th:src="@{../js/jquery.js}"></script>
+<script type="text/javascript" th:src="@{../js/jquery.nanoscroller/jquery.nanoscroller.js}"></script>
+<script type="text/javascript" th:src="@{../js/jquery.sparkline/jquery.sparkline.min.js}"></script>
+<script type="text/javascript" th:src="@{../js/jquery.easypiechart/jquery.easy-pie-chart.js}"></script>
+<script type="text/javascript" th:src="@{../js/jquery.ui/jquery-ui.js}" ></script>
+<script type="text/javascript" th:src="@{../js/jquery.nestable/jquery.nestable.js}"></script>
+<script type="text/javascript" th:src="@{../js/bootstrap.switch/bootstrap-switch.min.js}"></script>
+<script type="text/javascript" th:src="@{../js/bootstrap.datetimepicker/js/bootstrap-datetimepicker.min.js}"></script>
+<script type="text/javascript" th:src="@{../js/jquery.select2/select2.min.js}" ></script>
+    <script type="text/javascript" th:src="@{../js/jquery.select2/select2_locale_zh-CN.js}" ></script>
+   <!-- <script type="text/javascript" th:src="@{../js/jquery.select2/select2.min.js}" ></script>-->
+<script type="text/javascript" th:src="@{../js/bootstrap.slider/js/bootstrap-slider.js}"></script>
+<script type="text/javascript" th:src="@{../js/jquery.gritter/js/jquery.gritter.min.js}"></script>
+<script type="text/javascript" th:src="@{../js/behaviour/general.js}"></script>
+<script type="text/javascript" th:src="@{../js/jquery.niftymodals/js/jquery.modalEffects.js}"></script>
+<script type="text/javascript" th:src="@{../js/bootstrap.datetimepicker/js/bootstrap-datetimepicker.min.js}"></script>
+<script type="text/javascript" th:src="@{../js/jquery.datatables/jquery.datatables.min.js}"></script>
+<script type="text/javascript" th:src="@{../js/jquery.datatables/input.js}"></script>
+<script type="text/javascript" th:src="@{../js/jquery.datatables/bootstrap-adapter/js/datatables.js}"></script>
+<script type="text/javascript" th:src="@{../js/bootstrap.datetimepicker/js/bootstrap-datetimepicker.min.js}"></script>
+<script type="text/javascript" th:src="@{../js/jquery.icheck/icheck.min.js}"></script>
+<script type="text/javascript" th:src="@{../js/jquery.form.min.js}"></script>
+<script type="text/javascript" th:src="@{../js/jquery.validate.min.js}"></script>
+
+
+
+
+
+
+
+    <!--<script type="text/javascript">
+        $(document).ready(function(){
+            //initialize the javascript
+            App.init();
+        });
+    </script>-->
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+    <script src="../js/jquery.parsley/parsley.js" type="text/javascript"></script>
+<script type="text/javascript" src="../js/behaviour/voice-commands.js"></script>
+<script type="text/javascript" src="../js/bootstrap/dist/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../js/jquery.flot/jquery.flot.js"></script>
+<script type="text/javascript" src="../js/jquery.flot/jquery.flot.pie.js"></script>
+<script type="text/javascript" src="../js/jquery.flot/jquery.flot.resize.js"></script>
+<script type="text/javascript" src="../js/jquery.flot/jquery.flot.labels.js"></script>
+<script type="text/javascript" src="../js/jquery.flot/jquery.flot.time.js"></script>
+
+
+    <!--初始化-->
+    <script type="application/javascript">
+        $(document).ready(function(){
+
+
+
+            //初始化
+            getTree();
+
+           // getMessage();
+
+            setInterval(getMessage,30*60000);//1000为1秒钟
+            setInterval(getMessageAlarm,1*60000);//1000为1秒钟
+
+            //初始化
+            App.init({select2:true});
+
+        });
+
+        /**
+         * 生成tree
+         */
+        function getTree() {
+
+            getModuleByLevel();
+
+
+        }
+
+        /**
+         * 根据级别获取
+         * @param level
+         */
+        function getModuleByLevel(){
+
+            $.ajax({
+                url : "../module/getSidebarTree",
+                dataType : "json",
+                type : "POST",
+                async : false,
+                data : null,
+                error : function(error) {
+                    console.log(error.responseText);
+                },
+                success : function(e) {
+
+
+
+                    if(e.code == 0){
+                        var data = eval(e.data);
+                        console.info(data);
+                        for(var obj in data) {
+                            if (data[obj].level == 0) {
+
+                                $li = $('<li><a href="#"> <i class="' + data[obj].ico + '"></i> <span>' + data[obj].name + '</span> </a> <ul id="' + data[obj].id + '" class="sub-menu"></ul></li>');
+                                $("#tree_top").append($li);
+
+                            }
+                        }
+
+                        for(var obj in data) {
+                            if (data[obj].level == 1) {
+                                if ((".." + window.location.pathname) == data[obj].url) {
+                                    $li = $('<li class="active"><a href="' + data[obj].url + '">' + data[obj].name + '</a></li>');
+                                    $("#" + data[obj].parentId).append($li);
+                                } else {
+                                    $li = $('<li><a href="' + data[obj].url + '">' + data[obj].name + '</a></li>');
+                                    $("#" + data[obj].parentId).append($li);
+                                }
+                            }
+                        }
+
+
+                    }else{
+                        return null;
+                    }
+                }
+
+            });
+
+        }
+
+
+        function getMessage() {
+            $.ajax({
+                url : "../report_statistics/get_unchecked_report",
+                dataType : "json",
+                type : "POST",
+                async : false,
+                data : null,
+                error : function(error) {
+                    console.log(error.responseText);
+                },
+                success : function(e) {
+                    if(e.code == 0){
+                        if(e.data != 0){
+
+                            var info='<a href="../report/uncheck" style="color: #ffffff">'+e.data+'条故障未处理,请点击处理</a>';
+
+                            $.gritter.add({
+                                title: '未处理故障息告警',
+                                text: info,
+                                class_name: 'danger'
+                            });
+                        }
+
+
+                        /*var msg = '<a href="#"><i class="fa fa-cloud-upload info"></i>'+data+'<span class="date">30分钟以前.</span> </a>';
+
+                         $li=$(msg);
+                         $("#message_list").append($li);*/
+                    }else{
+                        return null;
+                    }
+                }
+
+            });
+        }
+
+
+        /**
+         * 告警提示
+         */
+        function getMessageAlarm() {
+            $.ajax({
+                url : "../report/unchecked_all",
+                dataType : "json",
+                type : "POST",
+                async : false,
+                data : null,
+                error : function(error) {
+                    console.log(error.responseText);
+                },
+                success : function(e) {
+                    if(e.code == 0){
+                        if(e.data != 0){
+                            var data = JSON.parse(e.data);
+                            for(var i in data){
+                                if(i>10){
+                                    var li = ' <li><a href="#">'+data[i].id+' <span class="date">'+data[i].createTime+'</span></a></li>';
+                                    $("#alarm_info").append(li);
+                                    break;
+                                }
+
+                            }
+                        }
+                    }
+                }
+
+            });
+        }
+
+
+        /**
+         * 打开修改密码窗口
+         */
+        function openUpdatePassword() {
+            $("#editPassword").modal('show');
+        }
+
+        /**
+         * 修改密码
+         */
+        function updatePassword() {
+            var option = {
+                dataType : 'json',
+
+                success : function(value) {
+                    $('#edit_password').resetForm();// 重置表单
+
+                    if(value.code == 0){
+
+                        $.gritter.add({
+                            title: '执行成功',
+                            text: '密码信息添加成功',
+                            class_name: 'success'
+                        });
+                    } else {
+                        $.gritter.add({
+                            title : '执行失败',
+                            text : '密码信息添加失败！',
+                            class_name : 'danger'
+                        });
+                    }
+                },
+                error : function() {
+                    $.gritter.add({
+                        title : '服务器错误',
+                        text : '对不起，服务器错误，请联系系统管理员！',
+                        class_name : 'danger'
+                    });
+                    // $("#useradd_from").button('reset');
+                }
+            };
+            $("#edit_password").ajaxForm(option).submit();
+        }
+
+
+    </script>
+
+</div>

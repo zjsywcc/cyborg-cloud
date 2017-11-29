@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zn"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<!--页头 start-->
+<head>
+    <div th:replace="common/header2:: common_header"></div>
+    <!--<link rel="stylesheet" href="../js/codemirror/addon/display/fullscreen.css"/>-->
+    <!--<script src="../js/codemirror/addon/display/fullscreen.js"></script>-->
+    <!--<script>-->
+    <!--window.onload = function() {-->
+    <!--window.editor = CodeMirror.fromTextArea(code, {-->
+    <!--mode: "javascript",-->
+    <!--lineNumbers: true,-->
+    <!--lineWrapping: true,-->
+    <!--extraKeys: {-->
+    <!--//key binding for toggle full screen on/off-->
+    <!--"F11": function(cm) {-->
+    <!--cm.setOption("fullScreen", !cm.getOption("fullScreen"));-->
+    <!--},-->
+    <!--//key binding for switch full screen off-->
+    <!--"Esc": function(cm) {-->
+    <!--if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);-->
+    <!--}-->
+    <!--}-->
+    <!--});-->
+    <!--};-->
+    <!--</script>-->
+
+</head>
+<!--页头 end-->
+<body>
+<!-- Fixed navbar -->
+<div th:include="common/navbar:: common_navbar"></div>
+
+<div id="cl-wrapper">
+    <div th:replace="common/sidebar:: common_sidebar"></div>
+
+
+    <!--content-start-->
+    <div class="container-fluid" id="pcont">
+        <div class="page-head">
+            <h2>申请数据概览</h2>
+            <ol class="breadcrumb">
+                <li><a href="#">申请统计</a></li>
+                <li class="active"><a href="#">申请统计</a></li>
+            </ol>
+        </div>
+        <div class="cl-mcont">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="block-flat">
+                        <div class="header">
+                            <h3>申请统计</h3>
+                            <div class="col-sm-2">
+                                <label class="control-label">业务线</label>
+                                <select id="selectDriverType" class="form-control">
+                                    <option></option>
+                                    <option>快车</option>
+                                    <option>专车</option>
+                                    <option>出租车</option>
+                                    <option>代驾</option>
+                                    <option>试驾</option>
+                                    <option>租车</option>
+                                    <option>顺风车</option>
+                                </select>
+                                <input type="hidden" id="searchDriverType" class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="stats_bar">
+                            <div class="butpro butstyle" data-step="2">
+                                <div class="sub"><h2>总申请数</h2><span id="totalCount"></span></div>
+                                <div class="stat"><span class="spk1"><canvas
+                                        style="display: inline-block; width: 74px; height: 16px; vertical-align: top;"
+                                        width="74" height="16"></canvas></span></div>
+                            </div>
+                            <div class="butpro butstyle">
+                                <div class="sub"><h2>提交成功数</h2><span id="submitCount"></span></div>
+                                <div class="stat" data-toggle="tooltip" title="提交率 = 提交成功数 / 总申请数"><span id="submitRatio"></span></div>
+                            </div>
+                            <div class="butpro butstyle">
+                                <div class="sub"><h2>通过数</h2><span id="permitCount"></span></div>
+                                <div class="stat" data-toggle="tooltip" title="通过率 = 通过数 / 提交成功数"><span id="permitRatio"></span></div>
+                            </div>
+                            <div class="butpro butstyle">
+                                <div class="sub"><h2>发送短信数</h2><span id="smsSentCount"></span></div>
+                                <div class="stat"><span class="spk1"><canvas
+                                        style="display: inline-block; width: 74px; height: 16px; vertical-align: top;"
+                                        width="74" height="16"></canvas></span></div>
+                            </div>
+                        </div>
+                        <div class="header">
+                            <h3>每日统计</h3>
+                            <div class="row dash-cols">
+                                <div class="col-sm-6 col-md-6 col-lg-4">
+                                    <label class="control-label">创建日期</label>
+                                    <div id="datepicker" class="input-group date datetime" data-min-view="2"
+                                         data-date-format="yyyy-mm-dd">
+                                        <input id="searchCreateDate" class="form-control" size="16" type="text"
+                                               readonly="readonly"/>
+                                        <span class="input-group-addon btn btn-primary"><span
+                                                class="glyphicon glyphicon-th"></span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="stats_bar">
+                            <div class="butpro butstyle" data-step="2"
+                                 data-intro="If you are looking for a different UI, this is for you!.">
+                                <div class="sub"><h2>日短链下发数</h2><span id="smsSentDaily"></span></div>
+                                <div class="stat"><span id="smsDaily"></span>(需发送)</div>
+                            </div>
+                            <div class="butpro butstyle">
+                                <div class="sub"><h2>日提交量</h2><span id="submitDaily"></span></div>
+                                <div class="stat"><span class="spk1"><canvas
+                                        style="display: inline-block; width: 74px; height: 16px; vertical-align: top;"
+                                        width="74" height="16"></canvas></span></div>
+                            </div>
+                            <div class="butpro butstyle">
+                                <div class="sub"><h2>日提交成功量</h2><span id="submitSuccessDaily"></span></div>
+                                <div class="stat" data-toggle="tooltip" title="日提交成功率 = 日提交成功量 / 日提交量"><span id="submitRatioDaily"></span></div>
+                            </div>
+                            <div class="butpro butstyle">
+                                <div class="sub"><h2>日跑策略量</h2><span id="strategyDaily"></span></div>
+                                <div class="stat" data-toggle="tooltip" title="日跑策略率 = 日跑策略量 / 日提交成功量"><span id="strategyRatioDaily"></span></div>
+                            </div>
+                            <div class="butpro butstyle">
+                                <div class="sub"><h2>日策略通过量</h2><span id="passDaily"></span></div>
+                                <div class="stat" data-toggle="tooltip" title="日策略通过率 = 日策略通过量 / 日跑策略量"><span id="passRatioDaily"></span></div>
+                            </div>
+                        </div>
+                        <div class="row dash-cols">
+                            <div class="block">
+                                <div id="pieChart"
+                                     style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--content-end-->
+
+
+    <!--遮罩-->
+    <div class="md-overlay"></div>
+
+
+</div>
+<!--页脚 start-->
+<div th:include="common/foot2:: common_foot"></div>
+<!--页脚 end-->
+
+<!--myjs-->
+<script type="application/javascript" src="../myjs/report/report.js"></script>
+<script src="../js/highcharts/highcharts.js"></script>
+<script src="../js/highcharts/exporting.js"></script>
+</body>
+</html>
