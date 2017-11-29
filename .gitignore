@@ -30,3 +30,6 @@ out/
 
 # Mac
 .DS_Store
+
+#logback properties file
+src/main/resources/logback/logback.properties
