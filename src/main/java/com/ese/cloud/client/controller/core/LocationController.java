@@ -2,7 +2,7 @@ package com.ese.cloud.client.controller.core;
 
 import com.alibaba.fastjson.JSON;
 import com.ese.cloud.client.entity.CyborganCoordinate;
-import com.ese.cloud.client.entity.MonitorEMGInfo;
+//import com.ese.cloud.client.service.CyborgCoordinateService;
 import com.ese.cloud.client.util.ReturnData;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -18,17 +18,20 @@ import java.util.List;
 @RequestMapping("map")
 public class LocationController {
     Logger logger=Logger.getLogger(LocationController.class);
+
     @RequestMapping(value="/index",method = RequestMethod.GET)
     public String index(){
         return "map/index";
     }
 
     /**
-     * 获取电子人实时肌电信号
+     * 获取电子人坐标
      */
     @RequestMapping(value = "/getLocationData", method = RequestMethod.POST)
     @ResponseBody
     public String getLocationData() {
+
+      //  List<CyborganCoordinate> LocationInfos = CyborgCoordinateService.all();
 
         try {
             List<CyborganCoordinate> LocationInfos = new ArrayList<>();
@@ -36,8 +39,8 @@ public class LocationController {
             double fakeX=120.135858;
             double fakeY=30.256759;
             for(int i = 0; i < 5; i++) {
-                fakeX =fakeX+0.00001;
-                fakeY=fakeY+0.00002;
+                fakeX =fakeX+0.001;
+                fakeY=fakeY+0.002;
                // System.out.println(fakeX);
                 CyborganCoordinate LocationInfo = new CyborganCoordinate();
                 LocationInfo.setValues(fakeX,fakeY);

@@ -31,6 +31,8 @@ public class CyborgController {
 
     @RequestMapping(value="/index",method= RequestMethod.GET)
     public String index(){
+
+       // System.out.println("jumping to index.html");
         return "cyborg/index";
     }
 
@@ -75,11 +77,17 @@ public class CyborgController {
     @RequestMapping(value="/add",method= RequestMethod.POST)
     @ResponseBody
     public  String  add(@RequestParam String name,
-                        @RequestParam String remarks){
+                        @RequestParam String remarks,
+                        @RequestParam String gender,
+                        @RequestParam String age){
 
         CyborgInfo cyborgInfo = new CyborgInfo();
         cyborgInfo.setName(name);
         cyborgInfo.setRemarks(remarks);
+        cyborgInfo.setGender(gender);
+        cyborgInfo.setAge(age);
+        cyborgInfo.setTiredness("alright");
+
 
         if(cyborgInfoService.add(cyborgInfo)){
             return ReturnData.result(0,"添加电子人信息成功", null);
@@ -101,12 +109,16 @@ public class CyborgController {
     public  String  update(
             @RequestParam String id,
             @RequestParam String name,
+            @RequestParam String gender,
+            @RequestParam String age,
             @RequestParam String remarks){
 
         CyborgInfo cyborgInfo = new CyborgInfo();
         cyborgInfo.setName(name);
         cyborgInfo.setId(id);
         cyborgInfo.setRemarks(remarks);
+        cyborgInfo.setAge(age);
+        cyborgInfo.setGender(gender);
 
         if(cyborgInfoService.update(cyborgInfo)){
             return ReturnData.result(0,"修改电子人信息成功", null);
@@ -124,7 +136,7 @@ public class CyborgController {
     @RequestMapping(value="/delete",method= RequestMethod.POST)
     @ResponseBody
     public  String  delete(@RequestParam String id){
-
+        System.out.println(id);
         if(cyborgInfoService.delete(id)){
             return ReturnData.result(0,"", null);
         }else{
@@ -132,6 +144,8 @@ public class CyborgController {
         }
 
     }
+
+
 
     /**
      * 根据id查询电子人信息
@@ -141,6 +155,8 @@ public class CyborgController {
     @RequestMapping(value="/findById",method= RequestMethod.POST)
     @ResponseBody
     public  String  findById(@RequestParam String  id){
+        System.out.println("editID=");
+        System.out.println(id);
         CyborgInfo cyborgInfo = cyborgInfoService.findById(id);
         if(cyborgInfo != null){
             return ReturnData.result(0,"", JSON.toJSONString(cyborgInfo));

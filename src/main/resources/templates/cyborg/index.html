@@ -37,9 +37,13 @@
                             <table class="table table-bordered" id="datatable" >
                                 <thead>
                                 <tr>
-                                    <th>电子人名称</th>
-                                    <th>电子人备注</th>
-                                    <th>操作</th>
+                                  <!--  <th>ID</th>-->
+                                    <th>UserName</th>
+                                    <th>Age</th>
+                                    <th>Gender</th>
+                                    <th>Remarks</th>
+                                    <th>Tired</th>
+                                    <th>Operations</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -100,6 +104,16 @@
                             </div>
 
                             <div class="form-group">
+                                <label>性别</label>
+                                <input type="text" id="add_gender" name="gender" class="form-control" placeholder=""/>
+                            </div>
+
+                            <div class="form-group">
+                                <label>年龄</label>
+                                <input type="text" id="add_age" name="age" class="form-control" placeholder=""/>
+                            </div>
+
+                            <div class="form-group">
                                 <label>备注</label>
                                 <input type="text" id="add_remark" name="remarks" class="form-control" placeholder="唯一"/>
                             </div>
@@ -135,12 +149,22 @@
                             </div>
 
                             <div class="form-group">
+                                <label>性别</label>
+                                <input type="text" id="edit_gender" name="gender" class="form-control" placeholder=""/>
+                            </div>
+
+                            <div class="form-group">
+                                <label>年龄</label>
+                                <input type="text" id="edit_age" name="age" class="form-control" placeholder=""/>
+                            </div>
+
+                            <div class="form-group">
                                 <label>备注</label>
-                                <input type="text" id="edit_remark" name="remarks" class="form-control" placeholder="唯一"/>
+                                <input type="text" id="edit_remarks" name="remarks" class="form-control" placeholder=""/>
                             </div>
                             <div class="modal-footer" style="">
                                 <button type="button" class="btn btn-default btn-flat md-close " data-dismiss="modal">取消</button>
-                                <button type="button" class="btn btn-success btn-flat md-close" data-dismiss="modal" onclick="update()">添加</button>
+                                <button type="button" class="btn btn-success btn-flat md-close" data-dismiss="modal" onclick="update()">确认修改</button>
                             </div>
                         </form>
                     </div>

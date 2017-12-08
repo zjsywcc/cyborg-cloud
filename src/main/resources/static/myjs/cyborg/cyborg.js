@@ -5,12 +5,7 @@ $(document).ready(function(){
     // addFormVaildate();
     //修改表单验证
     // editFormVaildate();
-
-    
-
 });
-
-
 
 /***
  * 初始化管理列表
@@ -30,7 +25,20 @@ function initGroup(){
         "order": [[ 1, 'asc' ]],
         "aoColumns" : [
             {"mDataProp":"name" ,"bVisible": true},
+            {"mDataProp":"age","bVisivle":true},
+            {"mDataProp":"gender" ,"bVisible": true},
             {"mDataProp":"remarks" ,"bVisible": true},
+            {"mDataProp":"tiredness" ,"bVisible": true,
+                'fnRender':function(oObj) {
+                    var t='<div>';
+                    console.log("waiting");
+                    var a=getTiredStatus(oObj.aData.id,oObj.aData.name);
+                    console.log("a=");
+                    console.log(a);
+                    t=t+a;
+                    t=t+'</div>';
+                    return t;
+                }},
             {"mDataProp":"id" ,"bVisible": true,
                 'fnRender' : function(oObj, sVal) {
                     var toolcol = '<div class="hidden-sm hidden-xs action-buttons">';
@@ -40,6 +48,8 @@ function initGroup(){
                     toolcol = toolcol + '<shiro:hasPermission name="alarm:delete"><a class="red" href="javascript:deleteInfo(\''+sVal+'\',\''+oObj.aData.name+'\')">';
                     toolcol = toolcol +			'<i class="ace-icon fa fa-trash-o bigger-130"></i>';
                     toolcol = toolcol +		'</a></shiro:hasPermission>';
+                    toolcol = toolcol + '<shiro:hasPermission name="alarm:monitor"><a class="blue" href="../monitor/index.html#'+sVal+'">';
+                    toolcol = toolcol +		'LiveData</a></shiro:hasPermission>';
                     toolcol = toolcol +	'</div>';
                     toolcol = toolcol +	'<div class="hidden-md hidden-lg">';
                     toolcol = toolcol +		'<div class="inline position-relative">';
@@ -48,7 +58,7 @@ function initGroup(){
                     toolcol = toolcol +				'data-toggle="dropdown" data-position="auto">';
                     toolcol = toolcol +				'<i';
                     toolcol = toolcol +					'class="ace-icon fa fa-caret-down icon-only bigger-120"></i>';
-                    toolcol = toolcol +			'</button>';
+                    // toolcol = toolcol +			'nihao</button>';
                     toolcol = toolcol +			'<ul';
                     toolcol = toolcol +			'class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">';
                     toolcol = toolcol +				'<li><a href="#" class="tooltip-info"';
@@ -72,11 +82,13 @@ function initGroup(){
                     toolcol = toolcol +			'</li>';
                     toolcol = toolcol +	'</ul>';
                     toolcol = toolcol +'</div>';
+                    // toolcol = toolcol +'<button>monitor</button>'
                     toolcol = toolcol +'</div>';
                     return toolcol;
                 }
 
             } ],
+
         "oLanguage" : {
             "sProcessing" : "正在加载中......",
             "sLengthMenu" : "每页显示 _MENU_ 条记录",
@@ -95,6 +107,32 @@ function initGroup(){
         }
     });
 }
+
+/**
+ *获取疲劳指数
+ * @param id
+ */
+function getTiredStatus(id,name){
+    var a="";
+    $.ajax({
+        url: "../monitor/getCyborgStatus",
+        dataType: "json",
+        type: "POST",
+        async:false,
+        data: {id: id, name: name},
+        success: function (data) {
+            console.log("success!");
+             a=JSON.parse(data.data);
+            console.log(a);
+        },
+        error: function (data) {
+            console.log("failed!");
+            a="EOF";
+        }
+    });
+    return a;
+}
+
 /**
  * 获取全部角色
  */
@@ -144,12 +182,13 @@ function intiRole() {
  * @param id
  */
 function deleteInfo(id,name) {
-
     $("#del_id").attr("value",id);
     $("#del_info").html(name);
 
     $("#deleteModal").modal('show');
 }
+
+
 
 /**
  * 确认删除
@@ -170,6 +209,7 @@ function deleteOk() {
         success : function(e) {
 
             if(e.code == 0){
+                console.log(e);
                 $.gritter.add({
                     title: '执行成功',
                     text: '电子人信息删除成功',
@@ -278,12 +318,12 @@ function update() {
 function editInfo(id) {
 
     $.ajax({
-        url : "../cyborg/findById",
-        dataType : "json",
-        type : "POST",
-        async : false,
-        data : {id:id},
-        error : function(error) {
+        url: "../cyborg/findById",
+        dataType: "json",
+        type: "POST",
+        async: false,
+        data: {id: id},
+        error: function (error) {
             $.gritter.add({
                 title: '执行失败',
                 text: '查询角色信息失败',
@@ -291,19 +331,21 @@ function editInfo(id) {
             });
             console.log(error.responseText);
         },
-        success : function(e) {
+        success: function (e) {
 
-            if(e.code == 0){
+            if (e.code == 0) {
 
                 var obj = JSON.parse(e.data);
 
-                $("#edit_id").attr("value",obj.id);
-                $("#edit_name").attr("value",obj.name);
-                $("#edit_remark").attr("value",obj.remark);
+                $("#edit_id").attr("value", obj.id);
+                $("#edit_name").attr("value", obj.name);
+                $("#edit_gender").attr("value", obj.gender);
+                $("#edit_age").attr("value", obj.age);
+                $("#edit_remarks").attr("value", obj.remarks);
 
                 $("#editModal").modal('show');
 
-            }else{
+            } else {
                 $.gritter.add({
                     title: '执行失败',
                     text: '查询角色信息失败',
@@ -316,3 +358,4 @@ function editInfo(id) {
 
     });
 }
+

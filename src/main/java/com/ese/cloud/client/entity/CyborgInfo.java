@@ -20,10 +20,20 @@ public class CyborgInfo implements Serializable {
      */
     private String name;
 
+    /*性别*/
+    private String gender;
+
+    /*年龄*/
+    private String age;
+
+
     /**
      * 备注
      */
     private String remarks;
+    private String tiredness;
+
+
 
     public String getId() {
         return id;
@@ -48,4 +58,18 @@ public class CyborgInfo implements Serializable {
     public void setRemarks(String remarks) {
         this.remarks = remarks;
     }
+
+    public String getGender(){return gender;}
+
+    public void setGender(String gender){this.gender=gender;}
+
+    public String getAge(){return age;}
+
+    public void setAge(String age){this.age=age;}
+
+    public String getTiredness() {
+        return tiredness;
+    }
+
+    public  void setTiredness(String tiredness){this.tiredness=tiredness;}
 }

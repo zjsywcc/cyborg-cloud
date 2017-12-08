@@ -57,5 +57,4 @@ public interface CyborgInfoService {
      */
     public boolean update(CyborgInfo cyborgInfo);
 
-
 }
