@@ -48,8 +48,11 @@ function initGroup(){
                     toolcol = toolcol + '<shiro:hasPermission name="alarm:delete"><a class="red" href="javascript:deleteInfo(\''+sVal+'\',\''+oObj.aData.name+'\')">';
                     toolcol = toolcol +			'<i class="ace-icon fa fa-trash-o bigger-130"></i>';
                     toolcol = toolcol +		'</a></shiro:hasPermission>';
-                    toolcol = toolcol + '<shiro:hasPermission name="alarm:monitor"><a class="blue" href="../monitor/index.html#'+sVal+'">';
-                    toolcol = toolcol +		'LiveData</a></shiro:hasPermission>';
+                    toolcol = toolcol + '<shiro:hasPermission name="alarm:monitor"><a class="red" href="../monitor/index.html#'+sVal+'">';
+                    toolcol = toolcol +			'<i class="fa fa-stethoscope"></i>';
+                    toolcol = toolcol +		'</a></shiro:hasPermission>';
+                   // toolcol = toolcol + '<shiro:hasPermission name="alarm:monitor"><a class="blue" href="../monitor/index.html#'+sVal+'">';
+                    //toolcol = toolcol +		'LiveData</a></shiro:hasPermission>';
                     toolcol = toolcol +	'</div>';
                     toolcol = toolcol +	'<div class="hidden-md hidden-lg">';
                     toolcol = toolcol +		'<div class="inline position-relative">';
@@ -58,7 +61,6 @@ function initGroup(){
                     toolcol = toolcol +				'data-toggle="dropdown" data-position="auto">';
                     toolcol = toolcol +				'<i';
                     toolcol = toolcol +					'class="ace-icon fa fa-caret-down icon-only bigger-120"></i>';
-                    // toolcol = toolcol +			'nihao</button>';
                     toolcol = toolcol +			'<ul';
                     toolcol = toolcol +			'class="dropdown-menu dropdown-only-icon dropdown-yellow dropdown-menu-right dropdown-caret dropdown-close">';
                     toolcol = toolcol +				'<li><a href="#" class="tooltip-info"';
