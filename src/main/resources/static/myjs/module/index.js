@@ -34,7 +34,7 @@ function add() {
         dataType : "json",
         type : "POST",
         async : false,
-        data : {name:name, url:url, key:key, ico:ico, remark:remark,level:level,father:father,sort:sort},
+        data : {name:name, url:url, key:key, ico:ico,remark:remark,level:level,father:father,sort:sort},
         error : function(error) {
             console.log(error.responseText);
         },
