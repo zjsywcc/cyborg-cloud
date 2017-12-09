@@ -37,6 +37,9 @@ public interface MonitorEMGInfoService {
      */
     public List<MonitorEMGInfo> findByIsRead(boolean isRead);
 
+
+    public List<MonitorEMGInfo> findByIsReadAndAhead(boolean isRead, long timestamp);
+
     /**
      * 分页查询
      * @param pageIndex

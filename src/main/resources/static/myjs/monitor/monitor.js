@@ -1,25 +1,36 @@
 $(document).ready(function () {
 
-    var emgArray = [], ajaxInterval = 60 * 1000, updateInterval = 500;
+    var emgArray = [], ajaxInterval = 30 * 1000, ajaxDelta = 3 * 1000;
+
 
     /**
      * 由于后台数据是假的 所以定时器请求可能得到比正在绘制的更旧的时间戳
      * 暂时丑陋地加上了一个正在绘制的状态
      * 目前会导致最多慢一分钟的更新
-     * TODO 等待数据库建立后 增加数据已经获取的状态 就不怕重新获取了
+     * TODO 等待数据库建立后 增加数据已经获取的状态 就不怕重新获取了 DONE
      * @type {boolean}
      */
     var drawing = false;
+
+    /**
+     * 保证每次运行从较新的数据开始更新
+     * 这样使得之后的数据的起始时间戳一直是该值
+     * 暂时使用这样的方案 有问题再改
+     * @type {number}
+     */
+    var lastStartTime = getCurrentTimestampAhead();
     /**
      *实时获取电子人肌电信号数据
      */
-    function getCyborgEMG() {
+    function getCyborgEMG(startTime) {
         $.ajax({
             url: "../monitor/getCyborgEMG",
             dataType: "json",
             type: "POST",
             async: true,
-            data: null,
+            data: {
+                startTime: startTime
+            },
             error: function (error) {
                 console.log(error.responseText);
             },
@@ -41,12 +52,15 @@ $(document).ready(function () {
 
     /**
      * 将封装的实时数据数组按照时间戳定时输出
-     * @param func
-     * @param array
-     * @param loopTimes
+     * @param func 更新实时图表函数
+     * @param array 实时数据数组
+     * @param loopTimes 重绘次数 即循环次数
      */
     function refreshLoop(func, array, loopTimes) {
         var index = 0;
+        /**
+         * 递归执行 按时间戳的间隔进行定时
+         */
         var interv = function () {
             drawing = true;
             console.log(array[index].timestamp);
@@ -145,14 +159,25 @@ $(document).ready(function () {
     }
 
     /**
+     * 获取比当前时间稍早（两个周期）的时间戳
+     * @returns {number}
+     */
+    function getCurrentTimestampAhead() {
+        var timestamp=new Date().getTime();
+        return timestamp - ajaxInterval * 2;
+    }
+
+    /**
      * 设置定时器，每隔一定时间发送异步请求
      */
-    getCyborgEMG();
+    getCyborgEMG(lastStartTime);
     setInterval(function () {
         if(!drawing) {
-            getCyborgEMG()
+            getCyborgEMG(lastStartTime);
         }
-    }, ajaxInterval);
+    }, ajaxInterval + ajaxDelta);
+
+
 
 });
 

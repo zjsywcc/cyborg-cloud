@@ -50,6 +50,14 @@ public class MonitorEMGInfoServiceImpl implements MonitorEMGInfoService {
         return monitorEMGInfoDao.findByQuery(query);
     }
 
+    public List<MonitorEMGInfo> findByIsReadAndAhead(boolean isRead, long timestamp) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("isRead").is(isRead));
+        query.addCriteria(Criteria.where("timestamp").gte(timestamp));
+        query.with(new Sort(Sort.Direction.ASC, "timestamp"));
+        return monitorEMGInfoDao.findByQuery(query);
+    }
+
     @Override
     public List<MonitorEMGInfo> pageFind(int pageIndex, int pageSize) {
         Query query = new Query();

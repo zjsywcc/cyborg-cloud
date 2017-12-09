@@ -53,6 +53,7 @@ public class ShiroConfiguration {
 
 
         //静态资源文件不需要验证
+        filterChainDefinitionMap.put("/bluetooth/**", "anon");
         filterChainDefinitionMap.put("/js/**", "anon");
         filterChainDefinitionMap.put("/css/**", "anon");
         filterChainDefinitionMap.put("/images/**", "anon");
@@ -66,7 +67,6 @@ public class ShiroConfiguration {
         filterChainDefinitionMap.put("/register", "anon");
         filterChainDefinitionMap.put("/api/report/*", "anon");
         filterChainDefinitionMap.put("/mobile/*", "anon");
-        filterChainDefinitionMap.put("/upload/*", "anon");
 
         filterChainDefinitionMap.put("/**", "authc");
         //filterChainDefinitionMap.put("/**", "anon");

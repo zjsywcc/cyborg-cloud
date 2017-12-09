@@ -43,10 +43,13 @@ public class MonitorController {
      */
     @RequestMapping(value = "/getCyborgEMG", method = RequestMethod.POST)
     @ResponseBody
-    public String getCyborgEMG() {
+    public String getCyborgEMG(@RequestParam long startTime) {
 
         try {
-            List<MonitorEMGInfo> emgInfos = monitorEMGInfoService.findByIsRead(false);
+            List<MonitorEMGInfo> emgInfos = monitorEMGInfoService.findByIsReadAndAhead(false, startTime);
+            /**
+             * fake data processing
+             */
 //            long timestamp = new Date().getTime();
 //            for(int i = 0; i < 120; i++) {
 //                double fakeEMG = Math.random() * 70;

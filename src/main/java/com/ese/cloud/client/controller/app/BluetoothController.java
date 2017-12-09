@@ -29,7 +29,7 @@ public class BluetoothController {
     @ResponseBody
     public String upload(@RequestBody UploadRequest uploadRequest) {
         try {
-            for(UploadRequest.ValuePair valuePair : uploadRequest.getValuePairs()) {
+            for (UploadRequest.ValuePair valuePair : uploadRequest.getValuePairs()) {
                 MonitorEMGInfo monitorEMGInfo = new MonitorEMGInfo();
                 monitorEMGInfo.setTimestamp(valuePair.getTimestamp());
                 monitorEMGInfo.setValue(valuePair.getValue());
@@ -39,8 +39,11 @@ public class BluetoothController {
             return ReturnData.result(200, "上传成功", null);
 
         } catch (Exception e) {
-            logger.info("upload failed: {}", e.toString());
-            return ReturnData.result(-1, "上传失败", null);
+            e.printStackTrace();
+            logger.info("upload failed: {}", e.getMessage());
+            return ReturnData.result(-1, String.format("上传失败 错误信息：%s", e.getMessage()), null);
         }
     }
+
+
 }
