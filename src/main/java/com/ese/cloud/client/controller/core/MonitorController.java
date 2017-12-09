@@ -2,8 +2,10 @@ package com.ese.cloud.client.controller.core;
 
 import com.alibaba.fastjson.JSON;
 import com.ese.cloud.client.entity.MonitorEMGInfo;
+import com.ese.cloud.client.service.MonitorEMGInfoService;
 import com.ese.cloud.client.util.ReturnData;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,6 +24,8 @@ public class MonitorController {
 
     Logger logger = Logger.getLogger(MonitorController.class);
 
+    @Autowired
+    MonitorEMGInfoService monitorEMGInfoService;
 
     @RequestMapping(value = "/index", method = RequestMethod.GET)
     public String index() {
@@ -36,15 +40,19 @@ public class MonitorController {
     public String getCyborgEMG() {
 
         try {
-            List<MonitorEMGInfo> emgInfos = new ArrayList<>();
-            long timestamp = new Date().getTime();
-            for(int i = 0; i < 120; i++) {
-                double fakeEMG = Math.random() * 70;
-                MonitorEMGInfo emgInfo = new MonitorEMGInfo();
-                emgInfo.setTimestamp(timestamp);
-                emgInfo.setValue(fakeEMG);
-                emgInfos.add(emgInfo);
-                timestamp += 500;
+            List<MonitorEMGInfo> emgInfos = monitorEMGInfoService.findByIsRead(false);
+//            long timestamp = new Date().getTime();
+//            for(int i = 0; i < 120; i++) {
+//                double fakeEMG = Math.random() * 70;
+//                MonitorEMGInfo emgInfo = new MonitorEMGInfo();
+//                emgInfo.setTimestamp(timestamp);
+//                emgInfo.setValue(fakeEMG);
+//                emgInfos.add(emgInfo);
+//                timestamp += 500;
+//            }
+            for(MonitorEMGInfo emgInfo : emgInfos) {
+                emgInfo.setRead(true);
+                monitorEMGInfoService.update(emgInfo);
             }
             return ReturnData.result(0, "获取申请统计数据成功", JSON.toJSONString(emgInfos));
         } catch (Exception e) {

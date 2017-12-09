@@ -35,7 +35,7 @@ public interface MonitorEMGInfoService {
      * @param isRead
      * @return
      */
-    public MonitorEMGInfo findByIsRead(boolean isRead);
+    public List<MonitorEMGInfo> findByIsRead(boolean isRead);
 
     /**
      * 分页查询
