@@ -20,10 +20,14 @@ public class CyborgInfo implements Serializable {
      */
     private String name;
 
-    /*性别*/
+    /**
+     * 性别
+     */
     private String gender;
 
-    /*年龄*/
+    /**
+     * 年龄
+     */
     private String age;
 
 

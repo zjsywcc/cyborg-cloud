@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-    var emgArray = [], ajaxInterval = 30 * 1000, ajaxDelta = 3 * 1000;
+    var emgArray = [], ajaxInterval = 1000;
 
 
     /**
@@ -15,7 +15,6 @@ $(document).ready(function () {
     /**
      * 保证每次运行从较新的数据开始更新
      * 这样使得之后的数据的起始时间戳一直是该值
-     * 暂时使用这样的方案 有问题再改
      * @type {number}
      */
     var lastStartTime = getCurrentTimestampAhead();
@@ -38,6 +37,7 @@ $(document).ready(function () {
                 if (e.code == 0) {
                    // console.log(e.data)
                     var emgPacket = JSON.parse(e.data);
+                    // lastStartTime = emgPacket[emgPacket.length - 1].timestamp;
                     refreshLoop(update, emgPacket, emgPacket.length);
                 } else {
                     $.gritter.add({
@@ -57,28 +57,32 @@ $(document).ready(function () {
      * @param loopTimes 重绘次数 即循环次数
      */
     function refreshLoop(func, array, loopTimes) {
-        var index = 0;
-        /**
-         * 递归执行 按时间戳的间隔进行定时
-         */
-        var interv = function () {
-            drawing = true;
-            console.log(array[index].timestamp);
-            func(array[index]);
-            var now = array[index].timestamp;
-            index++;
-            if(index >= loopTimes) {
-                drawing = false;
-                return;
+        if (loopTimes > 0) {
+            var index = 0;
+            /**
+             * 递归执行 按时间戳的间隔进行定时
+             */
+            var interv = function () {
+                drawing = true;
+                console.log(array[index].timestamp);
+                func(array[index]);
+                var now = array[index].timestamp;
+                index++;
+                if (index >= loopTimes) {
+                    drawing = false;
+                    return;
+                }
+                setTimeout(interv, array[index].timestamp - now);
+            };
+            var now = new Date().getTime();
+            var startTime = array[0].timestamp;
+            if (startTime > now) {
+                setTimeout(interv, startTime - now);
+            } else {
+                setTimeout(interv, 0);
             }
-            setTimeout(interv, array[index].timestamp - now);
-        };
-        var now = new Date().getTime();
-        var startTime = array[0].timestamp;
-        if(startTime > now) {
-            setTimeout(interv, startTime - now);
         } else {
-            setTimeout(interv, 0);
+            console.log("没有新的数据");
         }
     }
 
@@ -175,7 +179,7 @@ $(document).ready(function () {
         if(!drawing) {
             getCyborgEMG(lastStartTime);
         }
-    }, ajaxInterval + ajaxDelta);
+    }, ajaxInterval);
 
 
 
