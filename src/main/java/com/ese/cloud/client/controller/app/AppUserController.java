@@ -4,8 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.ese.cloud.client.api.LoginRequest;
 import com.ese.cloud.client.api.RegisterRequest;
 import com.ese.cloud.client.contants.GlobleVariable;
+import com.ese.cloud.client.entity.CyborgInfo;
 import com.ese.cloud.client.entity.app.AppUser;
 import com.ese.cloud.client.service.AppUserService;
+import com.ese.cloud.client.service.CyborgInfoService;
 import com.ese.cloud.client.util.ReturnData;
 import com.ese.cloud.client.util.TokenUtil;
 import org.apache.shiro.crypto.hash.Md5Hash;
@@ -27,6 +29,9 @@ public class AppUserController {
 
     @Autowired
     AppUserService appUserService;
+
+    @Autowired
+    CyborgInfoService cyborgInfoService;
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
@@ -65,6 +70,10 @@ public class AppUserController {
             appUser.setUsername(username);
             appUser.setPassword(password);
             appUser.setEmail(username);
+            CyborgInfo cyborgInfo = new CyborgInfo();
+            cyborgInfo.setName(appUser.getUsername());
+            cyborgInfo.setRemarks(appUser.getEmail());
+            cyborgInfoService.add(cyborgInfo);
             return ReturnData.result(200,"注册成功!", JSON.toJSONString(appUser));
         } else {
             return ReturnData.result(4001,"用户已存在!",null);

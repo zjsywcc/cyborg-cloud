@@ -4,8 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.ese.cloud.client.entity.MonitorEMGInfo;
+import com.ese.cloud.client.service.MonitorEMGInfoService;
 import com.ese.cloud.client.util.ReturnData;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.apache.poi.util.SystemOutLogger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +28,8 @@ public class MonitorController {
 
     Logger logger = Logger.getLogger(MonitorController.class);
 
+    @Autowired
+    MonitorEMGInfoService monitorEMGInfoService;
 
     @RequestMapping(value = "/index", method = RequestMethod.GET)
     public String index() {
@@ -39,18 +43,25 @@ public class MonitorController {
      */
     @RequestMapping(value = "/getCyborgEMG", method = RequestMethod.POST)
     @ResponseBody
-    public String getCyborgEMG() {
+    public String getCyborgEMG(@RequestParam long startTime) {
 
         try {
-            List<MonitorEMGInfo> emgInfos = new ArrayList<>();
-            long timestamp = new Date().getTime();
-            for(int i = 0; i < 120; i++) {
-                double fakeEMG = Math.random() * 70;
-                MonitorEMGInfo emgInfo = new MonitorEMGInfo();
-                emgInfo.setTimestamp(timestamp);
-                emgInfo.setValue(fakeEMG);
-                emgInfos.add(emgInfo);
-                timestamp += 500;
+            List<MonitorEMGInfo> emgInfos = monitorEMGInfoService.findByIsReadAndAhead(false, startTime);
+            /**
+             * fake data processing
+             */
+//            long timestamp = new Date().getTime();
+//            for(int i = 0; i < 120; i++) {
+//                double fakeEMG = Math.random() * 70;
+//                MonitorEMGInfo emgInfo = new MonitorEMGInfo();
+//                emgInfo.setTimestamp(timestamp);
+//                emgInfo.setValue(fakeEMG);
+//                emgInfos.add(emgInfo);
+//                timestamp += 500;
+//            }
+            for(MonitorEMGInfo emgInfo : emgInfos) {
+                emgInfo.setRead(true);
+                monitorEMGInfoService.update(emgInfo);
             }
             return ReturnData.result(0, "获取申请统计数据成功", JSON.toJSONString(emgInfos));
         } catch (Exception e) {
@@ -64,14 +75,14 @@ public class MonitorController {
     public String getCyborgStatus(@RequestParam String id,
                                   @RequestParam String name) {
         //
-       // System.out.println("ID=" + id);
-       //System.out.println("name=" + name);
-       // return level;
-       try {
+        // System.out.println("ID=" + id);
+        //System.out.println("name=" + name);
+        // return level;
+        try {
             String fakeTiredLevel = "7";
             return ReturnData.result(0, "", JSON.toJSONString(fakeTiredLevel));
         } catch (Exception e) {
-           String m="failed";
+            String m="failed";
             logger.error("获取疲劳度失败：", e);
             return ReturnData.result(-1, "获取疲劳度失败", m);
 

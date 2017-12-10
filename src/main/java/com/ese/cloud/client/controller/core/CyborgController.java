@@ -32,7 +32,7 @@ public class CyborgController {
     @RequestMapping(value="/index",method= RequestMethod.GET)
     public String index(){
 
-       // System.out.println("jumping to index.html");
+        // System.out.println("jumping to index.html");
         return "cyborg/index";
     }
 

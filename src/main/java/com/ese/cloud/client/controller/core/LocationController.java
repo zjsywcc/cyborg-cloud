@@ -31,7 +31,7 @@ public class LocationController {
     @ResponseBody
     public String getLocationData() {
 
-      //  List<CyborganCoordinate> LocationInfos = CyborgCoordinateService.all();
+        //  List<CyborganCoordinate> LocationInfos = CyborgCoordinateService.all();
 
         try {
             List<CyborganCoordinate> LocationInfos = new ArrayList<>();
@@ -41,7 +41,7 @@ public class LocationController {
             for(int i = 0; i < 5; i++) {
                 fakeX =fakeX+0.001;
                 fakeY=fakeY+0.002;
-               // System.out.println(fakeX);
+                // System.out.println(fakeX);
                 CyborganCoordinate LocationInfo = new CyborganCoordinate();
                 LocationInfo.setValues(fakeX,fakeY);
                 System.out.println(LocationInfo.x);

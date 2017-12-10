@@ -53,6 +53,7 @@ public class ShiroConfiguration {
 
 
         //静态资源文件不需要验证
+        filterChainDefinitionMap.put("/bluetooth/**", "anon");
         filterChainDefinitionMap.put("/js/**", "anon");
         filterChainDefinitionMap.put("/css/**", "anon");
         filterChainDefinitionMap.put("/images/**", "anon");
@@ -66,7 +67,6 @@ public class ShiroConfiguration {
         filterChainDefinitionMap.put("/register", "anon");
         filterChainDefinitionMap.put("/api/report/*", "anon");
         filterChainDefinitionMap.put("/mobile/*", "anon");
-        filterChainDefinitionMap.put("/upload/*", "anon");
 
         filterChainDefinitionMap.put("/**", "authc");
         //filterChainDefinitionMap.put("/**", "anon");
@@ -104,12 +104,12 @@ public class ShiroConfiguration {
      */
     @Bean
     public SimpleCookie remembeeMecookie(){
-      System.out.println("ShiroConfiguration.rememberMeCookie()");
-      //这个参数是cookie的名称，对应前端的checkbox的name = rememberMe
-      SimpleCookie simpleCookie = new SimpleCookie("rememberMe");
-      //<!-- 记住我cookie生效时间3天 ,单位秒;-->
-      simpleCookie.setMaxAge(259200);
-      return simpleCookie;
+        System.out.println("ShiroConfiguration.rememberMeCookie()");
+        //这个参数是cookie的名称，对应前端的checkbox的name = rememberMe
+        SimpleCookie simpleCookie = new SimpleCookie("rememberMe");
+        //<!-- 记住我cookie生效时间3天 ,单位秒;-->
+        simpleCookie.setMaxAge(259200);
+        return simpleCookie;
 
     }
 
@@ -119,11 +119,11 @@ public class ShiroConfiguration {
     @Bean
     public CookieRememberMeManager rememberMeManager(){
 
-      System.out.println("ShiroConfiguration.rememberMeManager()");
-      CookieRememberMeManager rememberMeManager = new CookieRememberMeManager();
-      rememberMeManager.setCookie(remembeeMecookie());
+        System.out.println("ShiroConfiguration.rememberMeManager()");
+        CookieRememberMeManager rememberMeManager = new CookieRememberMeManager();
+        rememberMeManager.setCookie(remembeeMecookie());
 
-      return rememberMeManager;
+        return rememberMeManager;
     }
 
 

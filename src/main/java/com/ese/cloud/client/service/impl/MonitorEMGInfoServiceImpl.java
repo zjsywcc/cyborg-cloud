@@ -7,14 +7,17 @@ import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
  * Created by wangchengcheng on 2017/11/9.
  */
+@Service("monitorEMGInfoService")
 public class MonitorEMGInfoServiceImpl implements MonitorEMGInfoService {
 
     Logger logger = LoggerFactory.getLogger(MonitorEMGInfoServiceImpl.class);
@@ -40,10 +43,19 @@ public class MonitorEMGInfoServiceImpl implements MonitorEMGInfoService {
     }
 
     @Override
-    public MonitorEMGInfo findByIsRead(boolean isRead) {
+    public List<MonitorEMGInfo> findByIsRead(boolean isRead) {
         Query query = new Query();
         query.addCriteria(Criteria.where("isRead").is(isRead));
-        return monitorEMGInfoDao.findOneByQuery(query);
+        query.with(new Sort(Sort.Direction.ASC, "timestamp"));
+        return monitorEMGInfoDao.findByQuery(query);
+    }
+
+    public List<MonitorEMGInfo> findByIsReadAndAhead(boolean isRead, long timestamp) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("isRead").is(isRead));
+        query.addCriteria(Criteria.where("timestamp").gte(timestamp));
+        query.with(new Sort(Sort.Direction.ASC, "timestamp"));
+        return monitorEMGInfoDao.findByQuery(query);
     }
 
     @Override
