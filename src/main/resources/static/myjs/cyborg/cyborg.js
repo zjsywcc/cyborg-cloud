@@ -24,11 +24,11 @@ function initGroup(){
         "sDom":"<'row'<'col-sm-6'l>r>t<'row'<'col-sm-6'i><'col-sm-6'p>>",
         "order": [[ 1, 'asc' ]],
         "aoColumns" : [
-            {"mDataProp":"name" ,"bVisible": true},
-            {"mDataProp":"age","bVisivle":true},
-            {"mDataProp":"gender" ,"bVisible": true},
-            {"mDataProp":"remarks" ,"bVisible": true},
-            {"mDataProp":"tiredness" ,"bVisible": true,
+            {"mDataProp":"name" ,"bVisible": true, "sDefaultContent": ""},
+            {"mDataProp":"age","bVisivle":true, "sDefaultContent": ""},
+            {"mDataProp":"gender" ,"bVisible": true, "sDefaultContent": ""},
+            {"mDataProp":"remarks" ,"bVisible": true, "sDefaultContent": ""},
+            {"mDataProp":"tiredness" ,"bVisible": true, "sDefaultContent": "",
                 'fnRender':function(oObj) {
                     var t='<div>';
                     console.log("waiting");

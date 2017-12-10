@@ -4,8 +4,9 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <!--页头 start-->
 <head>
-   <div th:replace="common/header2:: common_header"></div>
+    <div th:replace="common/header2:: common_header"></div>
 </head>
+
 <!--页头 end-->
 <body>
 <!-- Fixed navbar -->
@@ -17,70 +18,71 @@
 
     <!--content-start-->
     <div class="container-fluid" id="pcont">
-    <div class="page-head">
-        <h2>电子人信息管理</h2>
-        <ol class="breadcrumb">
-            <li><a href="#">电子人管理</a></li>
-            <li class="active"><a href="#">电子人信息管理</a></li>
-        </ol>
-    </div>
-    <div class="cl-mcont">
+        <div class="page-head">
+            <h2>电子人信息管理</h2>
+            <ol class="breadcrumb">
+                <li><a href="#">电子人管理</a></li>
+                <li class="active"><a href="#">电子人信息管理</a></li>
+            </ol>
+        </div>
+        <div class="cl-mcont">
 
-        <div class="row">
-            <div class="col-md-12">
-                <div class="block-flat">
-                    <div class="header">
-                        <button class="btn btn-success btn-flat" data-toggle="modal" data-target="#addModal">添加电子人信息</button>
-                    </div>
-                    <div class="content">
-                        <div class="table-responsive">
-                            <table class="table table-bordered" id="datatable" >
-                                <thead>
-                                <tr>
-                                  <!--  <th>ID</th>-->
-                                    <th>UserName</th>
-                                    <th>Age</th>
-                                    <th>Gender</th>
-                                    <th>Remarks</th>
-                                    <th>Tired</th>
-                                    <th>Operations</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <!--<tr class="odd gradeX">
-                                    <td>Trident</td>
-                                    <td>Internet
-                                        Explorer 4.0</td>
-                                    <td>Win 95+</td>
-                                    <td class="center"> 4</td>
-                                    <td class="center"></td>
-                                </tr>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="block-flat">
+                        <div class="header">
+                            <h4>电子人信息</h4>
+                            <!--<button class="btn btn-success btn-flat" data-toggle="modal" data-target="#addModal">添加电子人信息</button>-->
+                        </div>
+                        <div class="content">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="datatable" >
+                                    <thead>
+                                    <tr>
+                                        <!--  <th>ID</th>-->
+                                        <th>用户名</th>
+                                        <th>年龄</th>
+                                        <th>性别</th>
+                                        <th>备注</th>
+                                        <th>疲劳度</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <!--<tr class="odd gradeX">
+                                        <td>Trident</td>
+                                        <td>Internet
+                                            Explorer 4.0</td>
+                                        <td>Win 95+</td>
+                                        <td class="center"> 4</td>
+                                        <td class="center"></td>
+                                    </tr>
 
-                                <tr class="gradeU">
-                                    <td>Other browsers</td>
-                                    <td>All others</td>
-                                    <td>-</td>
-                                    <td class="center">-</td>
-                                    <td class="center">U</td>
-                                </tr>-->
-                                </tbody>
-                            </table>
+                                    <tr class="gradeU">
+                                        <td>Other browsers</td>
+                                        <td>All others</td>
+                                        <td>-</td>
+                                        <td class="center">-</td>
+                                        <td class="center">U</td>
+                                    </tr>-->
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+
+
+
+
+
+
         </div>
-
-
-
-
-
-
-
-    </div>
     </div>
 
-<!--content-end-->
+    <!--content-end-->
 
 
 
