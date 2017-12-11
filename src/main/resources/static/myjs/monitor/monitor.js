@@ -1,6 +1,11 @@
 $(document).ready(function () {
 
-    var emgArray = [], ajaxInterval = 1000;
+    var emgArray = [], ajaxInterval = 1000, dataInterval = 500, dataSetLength = 120;
+
+    /**
+     * 调节界面chart更新速度和后台数据获取速度不一致的偏差
+     */
+    var updateDelta = 100;
 
 
     /**
@@ -10,14 +15,15 @@ $(document).ready(function () {
      * TODO 等待数据库建立后 增加数据已经获取的状态 就不怕重新获取了 DONE
      * @type {boolean}
      */
-    var drawing = false;
+    // var drawing = false;
 
     /**
      * 保证每次运行从较新的数据开始更新
      * 这样使得之后的数据的起始时间戳一直是该值
      * @type {number}
      */
-    var lastStartTime = getCurrentTimestampAhead();
+    var lastStartTime = getCurrentTimestamp() - dataSetLength * dataInterval;
+
     /**
      *实时获取电子人肌电信号数据
      */
@@ -37,8 +43,14 @@ $(document).ready(function () {
                 if (e.code == 0) {
                     // console.log(e.data)
                     var emgPacket = JSON.parse(e.data);
-                    // lastStartTime = emgPacket[emgPacket.length - 1].timestamp;
-                    refreshLoop(update, emgPacket, emgPacket.length);
+                    if (emgPacket.length > 0) {
+                        // lastStartTime = emgPacket[emgPacket.length - 1].timestamp - dataSetLength * dataInterval;
+                        console.log("emgPacket");
+                        console.log(emgPacket);
+                        refreshLoop(update, emgPacket, emgPacket.length);
+                    } else {
+                        console.log("没有新的数据");
+                    }
                 } else {
                     $.gritter.add({
                         title: '执行失败',
@@ -57,35 +69,37 @@ $(document).ready(function () {
      * @param loopTimes 重绘次数 即循环次数
      */
     function refreshLoop(func, array, loopTimes) {
-        if (loopTimes > 0) {
-            var index = 0;
-            /**
-             * 递归执行 按时间戳的间隔进行定时
-             */
-            var interv = function () {
-                drawing = true;
-                console.log(array[index].timestamp);
-                func(array[index]);
-                var now = array[index].timestamp;
-                index++;
-                if (index >= loopTimes) {
-                    drawing = false;
-                    return;
-                }
-                setTimeout(interv, array[index].timestamp - now);
-            };
-            var now = new Date().getTime();
-            var startTime = array[0].timestamp;
-            if (startTime > now) {
-                setTimeout(interv, startTime - now);
-            } else {
-                setTimeout(interv, 0);
+        var index = 0;
+        /**
+         * 递归执行 按时间戳的间隔进行定时
+         */
+        var interv = function () {
+            // drawing = true;
+            console.log(array[index].timestamp);
+            func(array[index]);
+            var now = array[index].timestamp;
+            index++;
+            if (index >= loopTimes) {
+                // drawing = false;
+                return;
             }
+            // /**
+            //  * 解决数据刷新和获取速度不同步的问题
+            //  */
+            // if ((getCurrentTimestamp() - lastStartTime) > dataSetLength * dataInterval) {
+            //     setTimeout(interv, updateDelta);
+            // } else {
+                setTimeout(interv, array[index].timestamp - now);
+            // }
+        };
+        var now = new Date().getTime();
+        var startTime = array[0].timestamp;
+        if (startTime > now) {
+            setTimeout(interv, startTime - now);
         } else {
-            console.log("没有新的数据");
+            setTimeout(interv, 0);
         }
     }
-
 
 
     /**
@@ -93,82 +107,85 @@ $(document).ready(function () {
      * @param value
      */
     function update(value) {
-        if (emgArray.length > 120)
+        if (emgArray.length > dataSetLength) {
             emgArray = emgArray.slice(1);
-        emgArray.push([value.timestamp, value.value]);
-        console.log("update " + value);
-        $.plot($("#chartEMG"), [{
-            data: emgArray,
-            label: "Sales"
         }
-        ], {
-            series: {
-                lines: {
-                    show: true,
-                    lineWidth: 2,
-                    fill: true,
-                    fillColor: {
-                        colors: [{
-                            opacity: 0.25
-                        }, {
-                            opacity: 0.25
+        if (emgArray.length === 0 || value.timestamp > emgArray[emgArray.length - 1][0]) {
+            emgArray.push([value.timestamp, value.value]);
+            console.log("update " + value);
+            $.plot($("#chartEMG"), [{
+                data: emgArray,
+                label: "Sales"
+            }
+            ], {
+                series: {
+                    lines: {
+                        show: true,
+                        lineWidth: 2,
+                        fill: true,
+                        fillColor: {
+                            colors: [{
+                                opacity: 0.25
+                            }, {
+                                opacity: 0.25
+                            }
+                            ]
                         }
-                        ]
-                    }
+                    },
+                    points: {
+                        show: false
+                    },
+                    shadowSize: 2
                 },
-                points: {
+                legend: {
                     show: false
                 },
-                shadowSize: 2
-            },
-            legend: {
-                show: false
-            },
-            grid: {
-                labelMargin: 10,
-                axisMargin: 500,
-                hoverable: true,
-                clickable: true,
-                tickColor: "rgba(0,0,0,0.15)",
-                borderWidth: 0
-            },
-            colors: ["#B450B2", "#4A8CF7", "#52e136"],
-            xaxis: {
-                mode: "time",
-                tickSize: [1, "second"],
-                tickFormatter: function (v, axis) {
-                    var date = new Date(v);
-
-                    if (date.getSeconds() % 5 == 0) {
-                        var hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
-                        var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
-                        var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-
-                        return hours + ":" + minutes + ":" + seconds;
-                    } else {
-                        return "";
-                    }
+                grid: {
+                    labelMargin: 10,
+                    axisMargin: 500,
+                    hoverable: true,
+                    clickable: true,
+                    tickColor: "rgba(0,0,0,0.15)",
+                    borderWidth: 0
                 },
-                axisLabel: "Time",
-                axisLabelUseCanvas: true,
-                axisLabelFontSizePixels: 12,
-                axisLabelFontFamily: 'Verdana, Arial',
-                axisLabelPadding: 10
-            },
-            yaxis: {
-                ticks: 5,
-                tickDecimals: 0
-            }
-        });
+                colors: ["#B450B2", "#4A8CF7", "#52e136"],
+                xaxis: {
+                    mode: "time",
+                    tickSize: [1, "second"],
+                    tickFormatter: function (v, axis) {
+                        var date = new Date(v);
+
+                        if (date.getSeconds() % 5 == 0) {
+                            var hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+                            var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+                            var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+
+                            return hours + ":" + minutes + ":" + seconds;
+                        } else {
+                            return "";
+                        }
+                    },
+                    axisLabel: "Time",
+                    axisLabelUseCanvas: true,
+                    axisLabelFontSizePixels: 12,
+                    axisLabelFontFamily: 'Verdana, Arial',
+                    axisLabelPadding: 10
+                },
+                yaxis: {
+                    ticks: 5,
+                    tickDecimals: 0
+                }
+            });
+        }
     }
 
     /**
-     * 获取比当前时间稍早（两个周期）的时间戳
+     * 获取比当前时间的时间戳
      * @returns {number}
      */
-    function getCurrentTimestampAhead() {
-        var timestamp=new Date().getTime();
-        return timestamp - ajaxInterval * 2;
+    function getCurrentTimestamp() {
+        var timestamp = new Date().getTime();
+        return timestamp;
     }
 
     /**
@@ -176,15 +193,13 @@ $(document).ready(function () {
      */
     getCyborgEMG(lastStartTime);
     setInterval(function () {
-        if(!drawing) {
-            getCyborgEMG(lastStartTime);
-        }
+        // if(!drawing) {
+        getCyborgEMG(lastStartTime);
+        // }
     }, ajaxInterval);
 
 
-
 });
-
 
 
 

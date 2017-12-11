@@ -46,7 +46,7 @@ public class MonitorController {
     public String getCyborgEMG(@RequestParam long startTime) {
 
         try {
-            List<MonitorEMGInfo> emgInfos = monitorEMGInfoService.findByIsReadAndAhead(false, startTime);
+            List<MonitorEMGInfo> emgInfos = monitorEMGInfoService.findByIsReadAndUpdate(false, startTime);
             /**
              * fake data processing
              */
@@ -59,10 +59,6 @@ public class MonitorController {
 //                emgInfos.add(emgInfo);
 //                timestamp += 500;
 //            }
-            for(MonitorEMGInfo emgInfo : emgInfos) {
-                emgInfo.setRead(true);
-                monitorEMGInfoService.update(emgInfo);
-            }
             return ReturnData.result(0, "获取申请统计数据成功", JSON.toJSONString(emgInfos));
         } catch (Exception e) {
             logger.error("获取申请统计数据失败：", e);
