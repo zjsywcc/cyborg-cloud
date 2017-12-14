@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zn"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="description" content="" />
+	<meta name="author" content="" />
+	<link rel="shortcut icon" href="images/favicon.png" />
+
+
+	<title>Clean Zone</title>
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,400italic,700,800' rel='stylesheet' type='text/css' />
+	<link href='http://fonts.googleapis.com/css?family=Raleway:300,200,100' rel='stylesheet' type='text/css' />
+
+	<!-- Bootstrap core CSS -->
+	<link href="js/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+
+	<link rel="stylesheet" href="fonts/font-awesome-4/css/font-awesome.min.css" />
+
+
+	<!-- Custom styles for this template -->
+	<link href="css/style.css" rel="stylesheet" />	
+
+</head>
+
+<body class="texture">
+
+<div id="cl-wrapper" class="sign-up-container">
+
+	<div class="middle-sign-up">
+		<div class="block-flat">
+			<div class="header">							
+				<h3 class="text-center"><img class="logo-img" src="images/logo.png" alt="logo"/>SuperAdmin</h3>
+			</div>
+			<div>
+
+
+
+
+
+				<form style="margin-bottom: 0px !important;" class="form-horizontal" th:action="@{/user/register}" parsley-validate = "novalidate" th:method="POST">
+					<div class="content">
+						<h5 class="title text-center"><strong>注册</strong></h5>
+              <hr/>
+              <div class="form-group">
+				  <!--注册成功-->
+				  <div class="col-sm-12" th:if="${status eq 0}">
+				    <div class="alert alert-success">
+					  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+					  <i class="fa fa-check sign"></i><strong>${msg}</strong>
+				    </div>
+				  </div>
+                  <!--注册失败-->
+				  <div class="col-sm-12" th:if="${status eq 1}">
+					  <div class="alert alert-success">
+						  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+						  <i class="fa fa-check sign"></i><strong>${msg}</strong>
+					  </div>
+				  </div>
+
+              </div>
+
+              <div class="form-group">
+				  <div class="col-sm-12">
+					     <div class="input-group">
+							 <span class="input-group-addon"><i class="fa fa-user"></i></span>
+							 <input type="text" name="username" parsley-trigger="change" parsley-error-container="#nick-error" required="required" placeholder="用户名" class="form-control" />
+						 </div>
+                         <div id="nick-error"></div>
+				  </div>
+			  </div>
+
+						<div class="form-group">
+								<div class="col-sm-12">
+									<div class="input-group">
+										<span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+										<input type="email" name="email" parsley-trigger="change" parsley-error-container="#email-error" required="required" placeholder="电子邮件" class="form-control" />
+									</div>
+                  <div id="email-error"></div>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-6 col-xs-6">
+									<div class="input-group">
+										<span class="input-group-addon"><i class="fa fa-lock"></i></span>
+										<input id="pass1" name="password" type="password" parsley-error-container="#password-error" placeholder="密码" required="required" class="form-control" />
+									</div>
+                  <div id="password-error"></div>
+								</div>
+								<div class="col-sm-6 col-xs-6">
+									<div class="input-group">
+										<span class="input-group-addon"><i class="fa fa-lock"></i></span>
+										<input parsley-equalto="#pass1" type="password" parsley-error-container="#confirmation-error" required="required" placeholder="再次输入密码" class="form-control" />
+									</div>
+                  <div id="confirmation-error"></div>
+								</div>
+							</div>
+             <p class="spacer">注册前请阅读 <a href="#">用户协议1</a> and <a href="#">用户协议2</a>.</p>
+            <button class="btn btn-block btn-success btn-rad btn-lg" type="submit">注册</button>
+							
+					</div>
+			  </form>
+			</div>
+		</div>
+		<div class="text-center out-links"><a href="#">&copy; 2016 任聪</a></div>
+	</div> 
+	
+</div>
+
+
+  <script src="js/jquery.js"></script>
+  <script src="js/jquery.parsley/parsley.js" type="text/javascript"></script>
+  <script src="js/behaviour/general.js" type="text/javascript"></script>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="js/behaviour/voice-commands.js"></script>
+<script src="js/bootstrap/dist/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/jquery.flot/jquery.flot.js"></script>
+<script type="text/javascript" src="js/jquery.flot/jquery.flot.pie.js"></script>
+<script type="text/javascript" src="js/jquery.flot/jquery.flot.resize.js"></script>
+<script type="text/javascript" src="js/jquery.flot/jquery.flot.labels.js"></script>
+</body>
+</html>

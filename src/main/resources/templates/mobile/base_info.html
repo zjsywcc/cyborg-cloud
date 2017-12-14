@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zn"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<!--页头 start-->
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>电子人云平台</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1"/>
+
+    <link rel="stylesheet" href="https://g.alicdn.com/msui/sm/0.6.2/css/sm.min.css"/>
+
+
+
+</head>
+<!--页头 end-->
+<body>
+
+<div class="page-group">
+    <!-- 你的html代码 -->
+    <div class="page">
+        <header class="bar bar-nav">
+            <a class="icon icon-left pull-left back"></a>
+            <a class="icon icon-refresh pull-right"></a>
+            <h1 class='title'>基本信息</h1>
+        </header>
+        <form id="add_form" name="add_form" action="save_base" method="post">
+        <div class="content">
+            <div class="list-block">
+                <ul>
+                    <!-- Text inputs -->
+                    <li>
+                        <div class="item-content">
+                            <div class="item-media"><i class="icon icon-form-name"></i></div>
+                            <div class="item-inner">
+                                <div class="item-title label">姓名</div>
+                                <div class="item-input">
+                                    <input type="hidden" id="add_id" value="${id}"/>
+                                    <input type="text" id="add_name" name="name" placeholder="" required="true"/>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-media"><i class="icon icon-form-email"></i></div>
+                            <div class="item-inner">
+                                <div class="item-title label">城市</div>
+                                <div class="item-input">
+                                    <input id="add_city" name="city" type="text"/>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-media"><i class="icon icon-form-password"></i></div>
+                            <div class="item-inner">
+                                <div class="item-title label">注册手机号</div>
+                                <div class="item-input">
+                                    <input  type="text" id="add_reg_mob" name="regmob" placeholder="" class=""/>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-media"><i class="icon icon-form-password"></i></div>
+                            <div class="item-inner">
+                                <div class="item-title label">新手机号</div>
+                                <div class="item-input">
+                                    <input type="text" id="add_new_mob" name="newmob" placeholder="" class=""/>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-media"><i class="icon icon-form-password"></i></div>
+                            <div class="item-inner">
+                                <div class="item-title label">车牌号</div>
+                                <div class="item-input">
+                                    <input type="text" id="add_car_num"  name="car" placeholder="" class=""/>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-media"><i class="icon icon-form-password"></i></div>
+                            <div class="item-inner">
+                                <div class="item-title label">身份证号</div>
+                                <div class="item-input">
+                                    <input type="text" id="add_identity_num" name="identity" placeholder="" class=""/>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-media"><i class="icon icon-form-password"></i></div>
+                            <div class="item-inner">
+                                <div class="item-title label">银行卡后6位</div>
+                                <div class="item-input">
+                                    <input type="number" id="add_bank_num" name="bank" minlength="6" maxlength="6" placeholder="" class=""/>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="item-content">
+                            <div class="item-media"><i class="icon icon-form-password"></i></div>
+                            <div class="item-inner">
+                                <div class="item-title label">绑定过车辆</div>
+                                <div class="item-input">
+                                    <label class="label-switch">
+                                        <input type="checkbox" id="add_bind" name="bind"/>
+                                        <div class="checkbox"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+
+                </ul>
+            </div>
+            <div class="content-block">
+                <div class="row">
+                    <div class="col-100"><a href="javascript:document.add_form.submit();"  class="button button-big button-fill button-warning">下一步</a></div>
+                </div>
+            </div>
+        </div>
+        </form>
+    </div>
+
+</div>
+
+<script type='text/javascript' src='https://g.alicdn.com/sj/lib/zepto/zepto.min.js' charset='utf-8'></script>
+<script type='text/javascript' src='https://g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
+<script type="text/javascript" src="https://g.alicdn.com/msui/sm/0.6.2/js/sm-city-picker.min.js" charset="utf-8"></script>
+
+<script type="application/javascript" src="../myjs/mobile/base_info.js"></script>
+<script>
+    $.init();
+</script>
+
+</body>
+</html>

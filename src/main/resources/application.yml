@@ -1,0 +1,47 @@
+server:
+  port: ${vcap.application.port:8000}
+  tomcat:
+     uri-encoding: UTF-8
+spring:
+  profiles:
+    active: dev
+  http:
+    encoding:
+      charset: UTF-8 #编码格式
+      enabled: true #http编码
+      force: true #强制编码
+
+# THYMELEAF (ThymeleafAutoConfiguration)
+---
+spring:
+   profiles: dev
+   thymeleaf:
+      prefix: classpath:/templates/
+      suffix: .html
+      mode: HTML5
+      encoding: UTF-8
+      content-type: text/html
+      cache: false #false开发用,不用重启服务
+   jpa:
+      generate-ddl: true
+   data:
+      mongodb:
+        uri: mongodb://127.0.0.1:27017/passport-updatephone
+#        uri: mongodb://127.0.0.1:27017/hunter
+   http:
+      multipart:
+         enabled: true #支持文件上传
+         file-size-threshold: 0 #支持文件写入磁盘
+         location: /Users/user/linshi # 上传文件的临时目录
+         max-file-size: 1Mb # 最大支持文件大小
+         max-request-size: 10Mb # 最大支持请求大小
+         filedir: #上传存放文件的路径
+
+
+short-url:
+   expired-time: 1440 #失效时间 单位为分钟
+log:
+   home: /Users/user/logs
+   name: account
+
+

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zn"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<!--页头 start-->
+<head>
+    <div th:replace="common/header2:: common_header"></div>
+</head>
+<!--页头 end-->
+<body>
+<!-- Fixed navbar -->
+<div th:include="common/navbar:: common_navbar"></div>
+
+<div id="cl-wrapper">
+    <div th:replace="common/sidebar:: common_sidebar"></div>
+
+
+    <!--content-start-->
+    <div class="container-fluid" id="pcont">
+        <div class="page-head">
+            <h2>电子人实时数据</h2>
+            <ol class="breadcrumb">
+                <li><a href="#">电子人监控</a></li>
+                <li class="active"><a href="#">电子人信息监控</a></li>
+            </ol>
+            <p><a href="../cyborg/index.html">  返回🔙</a></p>
+        </div>
+        <div class="cont">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="block-flat">
+                        <div class="block-flat">
+                            <div class="header">
+                                <h3>肌电信号实时数据</h3>
+                            </div>
+                            <div class="content">
+                                <div id="chartEMG" style="height: 230px; padding: 0px; position: relative;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+
+
+
+    <!--遮罩-->
+    <div class="md-overlay"></div>
+
+
+</div>
+<!--页脚 start-->
+<div th:include="common/foot2:: common_foot"></div>
+<!--页脚 end-->
+
+<!--myjs-->
+<script type="application/javascript" src="../myjs/monitor/monitor.js"></script>
+</body>
+</html>
