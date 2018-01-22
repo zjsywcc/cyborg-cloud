@@ -7,20 +7,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-/**
- * Created by huarui on 2017/12/12
- */
 @Controller
-@RequestMapping("push")
-public class PushController {
-
+@RequestMapping("tiredness")
+public class TirednessController {
     Logger logger = Logger.getLogger(MonitorController.class);
-
-    @Autowired
-    MonitorEMGInfoService monitorEMGInfoService;
 
     @RequestMapping(value = "/index", method = RequestMethod.GET)
     public String index() {
-        return "push/index";
+        return "tiredness/index";
+    }
+    @RequestMapping(value = "/index2", method = RequestMethod.GET)
+    public String index2() {
+        return "tiredness/index2";
     }
 }

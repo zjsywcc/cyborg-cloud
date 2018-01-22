@@ -1,35 +1,99 @@
 $(document).ready(function () {
+console.log("enter!")
+ function show() {
+var DATE=$("#date6").val();
+var ITEM=$("#item6").val();
+var DANWEI=$("#danwei6").val();
 
-    var emgArray = [], ajaxInterval = 1000, dataInterval = 500, dataSetLength = 120;
+        // 路径配置
+        require.config({
+            paths: {
+                echarts: 'http://echarts.baidu.com/build/dist'
+            }
+        });
+    require(
+        [
+            'echarts',
+            'echarts/chart/bar'
+        ],
+        DrawChart(ITEM,DATE,DANWEI)
+    );
+ }
+    function DrawChart(item,date,danwei) {
+     console.log("ready to draw");
+        $.ajax({
+            url:"../statistics/getStatistics",
+            dateType:"json",
+            type:"POST",
+            async:false,
+            data:{
+                item:item,
+                date:date,
+                danwei:danwei
+            },
+            error:function (error) {
+                console.log("wrong");
+                console.log(error.responseText);
+            },
+            success:function (e) {
+                console.log(e.code);
+                if(e.code===0){
+                    var statPack=JSON.parse(e.data);
+                    if (statPack.length>0){
+                        console.log(statPack);
+                            // 基于准备好的dom，初始化echarts图表
+                            var myChart = ec.init(document.getElementById('com_stats'));
 
-    /**
-     * 调节界面chart更新速度和后台数据获取速度不一致的偏差
-     */
-    var updateDelta = 100;
+                            var option = {
+                                tooltip: {
+                                    show: true
+                                },
+                                legend: {
+                                    data: ['销量']
+                                },
+                                xAxis: [
+                                    {
+                                        type: 'category',
+                                        data: ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"]
+                                    }
+                                ],
+                                yAxis: [
+                                    {
+                                        type: 'value'
+                                    }
+                                ],
+                                series: [
+                                    {
+                                        "name": "销量",
+                                        "type": "bar",
+                                        "data": [5, 20, 40, 10, 10, 20]
+                                    }
+                                ]
+                            };
+                            // 为echarts对象加载数据
+                            myChart.setOption(option);
+                        }
+                    else {
+                        console.log("没有符合要求的数据，请重新选择");
+                    }
+                } else {
+                    $.gritter.add({
+                        title: '执行失败',
+                        text: e.msg,
+                        class_name: 'danger'
+                    });
+                }
+            }
+        });
+    }
 
-
-    /**
-     * 由于后台数据是假的 所以定时器请求可能得到比正在绘制的更旧的时间戳
-     * 暂时丑陋地加上了一个正在绘制的状态
-     * 目前会导致最多慢一分钟的更新
-     * TODO 等待数据库建立后 增加数据已经获取的状态 就不怕重新获取了 DONE
-     * @type {boolean}
-     */
-    // var drawing = false;
-
-    /**
-     * 保证每次运行从较新的数据开始更新
-     * 这样使得之后的数据的起始时间戳一直是该值
-     * @type {number}
-     */
-    var lastStartTime = getCurrentTimestamp() - dataSetLength * dataInterval;
 
     /**
      *实时获取电子人肌电信号数据
      */
     function getCyborgEMG(startTime) {
         $.ajax({
-            url: "../monitor/getCyborgEMG",
+            url: "../statistics/getCyborgEMG",
             dataType: "json",
             type: "POST",
             async: true,
@@ -40,13 +104,13 @@ $(document).ready(function () {
                 console.log(error.responseText);
             },
             success: function (e) {
-                console.log("e=");
-                console.log(e);
                 if (e.code == 0) {
-                     console.log("monitor data="+e.data);
+                    // console.log(e.data)
                     var emgPacket = JSON.parse(e.data);
                     if (emgPacket.length > 0) {
                         // lastStartTime = emgPacket[emgPacket.length - 1].timestamp - dataSetLength * dataInterval;
+                        console.log("emgPacket");
+                        console.log(emgPacket);
                         refreshLoop(update, emgPacket, emgPacket.length);
                     } else {
                         console.log("没有新的数据");
@@ -75,7 +139,7 @@ $(document).ready(function () {
          */
         var interv = function () {
             // drawing = true;
-          //  console.log(array[index].timestamp);
+            console.log(array[index].timestamp);
             func(array[index]);
             var now = array[index].timestamp;
             index++;
@@ -89,7 +153,7 @@ $(document).ready(function () {
             // if ((getCurrentTimestamp() - lastStartTime) > dataSetLength * dataInterval) {
             //     setTimeout(interv, updateDelta);
             // } else {
-                setTimeout(interv, array[index].timestamp - now);
+            setTimeout(interv, array[index].timestamp - now);
             // }
         };
         var now = new Date().getTime();
@@ -112,8 +176,8 @@ $(document).ready(function () {
         }
         if (emgArray.length === 0 || value.timestamp > emgArray[emgArray.length - 1][0]) {
             emgArray.push([value.timestamp, value.value]);
-       //     console.log("update " + value);
-            $.plot($("#chartEMG"), [{
+            console.log("update " + value);
+            $.plot($("#StatisticChart"), [{
                 data: emgArray,
                 label: "Sales"
             }
@@ -188,23 +252,5 @@ $(document).ready(function () {
         return timestamp;
     }
 
-    /**
-     * 设置定时器，每隔一定时间发送异步请求
-     */
-    getCyborgEMG(lastStartTime);
-    setInterval(function () {
-        // if(!drawing) {
-        getCyborgEMG(lastStartTime);
-        // }
-    }, ajaxInterval);
-
 
 });
-
-
-
-
-
-
-
-

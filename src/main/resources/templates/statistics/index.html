@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zn"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<!--页头 start-->
+<head>
+    <div th:replace="common/header2:: common_header"></div>
+
+</head>
+<!--页头 end-->
+<body>
+<!-- Fixed navbar -->
+<div th:include="common/navbar:: common_navbar"></div>
+
+<div id="cl-wrapper">
+    <div th:replace="common/sidebar:: common_sidebar"></div>
+
+
+    <!--content-start-->
+    <div class="container-fluid" id="pcont">
+        <div class="page-head">
+            <h2>电子人统计数据</h2>
+        </div>
+        <div class="cont">
+
+            <div class="row">
+                <div class="col-md-12">
+                        <div class="block-flat" style="float: left;height: 349px">
+                            <div style="width: 300px">
+
+                            <div class="form-group">
+                                <label class="control-label">统计内容:</label>
+                                <select class="select2" id="item6">
+                                    <option value="疲劳判断准确度" selected="">疲劳判断准确度</option>
+                                    <option value="option2">option2</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label">选择日期:</label>
+                                <div class="input-group date datetime" data-min-view="2" data-date-format="yyyy-mm-dd">
+                                    <input  id="date6" type="text" class="form-control" size="2" width="240px"/>
+                                    <span class="input-group-addon btn btn-primary">
+                                    <span class="glyphicon glyphicon-th">
+                                    </span>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                        <label class="control-label">粒度</label>
+                                        <select class="select2" id="danwei6">
+                                                <option value="小时">小时</option>
+                                                <option value="天">天</option>
+                                        </select>
+                                    </div>
+
+                            </div>
+
+                            <button class="btn btn-primary" data-dismiss="modal" type="button" style="align-self: center" onclick="show()">确定</button>
+
+                            <!--<div class="content">-->
+                                <!--<div id="StatisticChart" style="height: 230px; padding: 0px; position: relative;"></div>-->
+                            <!--</div>-->
+                        </div>
+                    <div class="block-flat" style="float: left;width:720px">
+                    <div class="content">
+                        <div class="widget-block">
+                            <div class="white-box padding">
+                                <div class="row info">
+                                    <div>
+                                        <h3>统计数据</h3>
+                                    </div>
+                                    <div>
+                                        <div id="com_stats" style="height:200px;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+
+
+
+    <!--遮罩-->
+    <div class="md-overlay"></div>
+
+
+</div>
+<!--页脚 start-->
+<div th:include="common/foot2:: common_foot"></div>
+<!--页脚 end-->
+<script src="http://echarts.baidu.com/build/dist/echarts.js"></script>
+
+    <script type="text/javascript">
+function show() {
+    var DATE=$("#date6").val();
+    var ITEM=$("#item6").val();
+    var DANWEI=$("#danwei6").val();
+    $.ajax({
+        url: "../statistics/getStatistics",
+        dataType: "json",
+        type: "POST",
+        async: true,
+        data: {
+            item:ITEM,
+            date:DATE,
+            danwei:DANWEI
+        },
+        error: function (error) {
+            console.log(error.responseText);
+        },
+        success: function (e) {
+                console.log("e=");
+                console.log(e);
+                if (e.code == 0) {
+                     console.log("data="+e.data);
+                    var emgPacket = JSON.parse(e.data);
+                    if (emgPacket.length > 0) {
+                        var x=new Array();
+                        var y=new Array();
+                        // lastStartTime = emgPacket[emgPacket.length - 1].timestamp - dataSetLength * dataInterval;
+                        console.log("emgPacket");
+                       $.each(emgPacket,function (value) {
+                           x.push(emgPacket[value].timestamp);
+                           y.push(emgPacket[value].value);
+                       })
+                        drawChart(x,y);
+                    } else {
+                        console.log("没有新的数据");
+                    }
+                } else {
+                    $.gritter.add({
+                        title: '执行失败',
+                        text: e.msg,
+                        class_name: 'danger'
+                    });
+                }
+            }
+
+        });
+}
+        
+        
+        
+        function drawChart(x,y) {
+        // 路径配置
+        require.config({
+            paths: {
+                echarts: 'http://echarts.baidu.com/build/dist'
+            }
+        });
+
+    // 使用
+    require(
+        [
+            'echarts',
+            'echarts/chart/line' // 使用柱状图就加载bar模块，按需加载
+        ],
+        function (echart) {
+            // 基于准备好的dom，初始化echarts图表
+            var myChart = echart.init(document.getElementById('com_stats'));
+
+            var option = {
+                tooltip: {
+                    show: true
+                },
+                legend: {
+                    data:['疲劳度预测的准确率']
+                },
+                xAxis : [
+                    {
+                        type : 'category',
+                        data : x
+                    }
+                ],
+                yAxis : [
+                    {
+                        type : 'value'
+                    }
+                ],
+                series : [
+                    {
+                        "name":"疲劳预测的准确率",
+                        "type":"line",
+                        "data":y
+                    }
+                ]
+            };
+
+            // 为echarts对象加载数据
+            myChart.setOption(option);
+        }
+    );
+        }
+
+
+    </script>
+
+
+<!--myjs-->
+<script src="../../static/myjs/statistics/stat.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zn"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<!--页头 start-->
+<head>
+    <div th:replace="common/header2:: common_header"></div>
+</head>
+<!--页头 end-->
+<body>
+<!-- Fixed navbar -->
+<div th:include="common/navbar:: common_navbar"></div>
+
+<div id="cl-wrapper">
+    <div th:replace="common/sidebar:: common_sidebar"></div>
+
+<div class="form-group">
+    <label class="control-label">By date:</label>
+    <div class="input-group date datetime" data-min-view="2" data-date-format="yyyy-mm-dd">
+        <input class="form-control" size="16" type="text" value="" readonly>
+        <span class="input-group-addon btn btn-primary"><span class="glyphicon glyphicon-th"></span></span>
+    </div>
+</div>
+</div>
+
+</body>
+</html>

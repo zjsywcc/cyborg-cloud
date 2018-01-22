@@ -29,13 +29,16 @@ function initGroup(){
             {"mDataProp":"gender" ,"bVisible": true, "sDefaultContent": ""},
             {"mDataProp":"remarks" ,"bVisible": true, "sDefaultContent": ""},
             {"mDataProp":"tiredness" ,"bVisible": true, "sDefaultContent": "",
-                'fnRender':function(oObj) {
+                'fnRender':function(oObj,sVal) {
                     var t='<div>';
-                    console.log("waiting");
+                   // console.log("waiting");
                     var a=getTiredStatus(oObj.aData.id,oObj.aData.name);
                     console.log("a=");
                     console.log(a);
-                    t=t+a;
+                   // t=t+a;
+                   t=t+'<shiro:hasPermission name="alarm:tiredStatus"><a class="black" href="../tiredness/index.html#'+oObj.aData.id+'">'+a;
+                  // t=t+'<i class=" fa fa-stethoscope"></i>';
+                    t=t+'</a></shiro:hasPermission>';
                     t=t+'</div>';
                     return t;
                 }},

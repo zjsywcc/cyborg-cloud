@@ -19,6 +19,7 @@ CONDITIONS OF ANY KIND, either express or implied. See the Apache License and th
 the specific language governing permissions and limitations under the Apache License and the GPL License.
 */
 (function ($) {
+    console.log("here is jquery.select2.js!");
     if(typeof $.fn.each2 == "undefined") {
         $.extend($.fn, {
             /*

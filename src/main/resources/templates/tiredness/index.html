@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zn"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<!--页头 start-->
+<head>
+    <div th:replace="common/header2:: common_header"></div>
+</head>
+<!--页头 end-->
+<body>
+<!-- Fixed navbar -->
+<div th:include="common/navbar:: common_navbar"></div>
+
+<div id="cl-wrapper">
+    <div th:replace="common/sidebar:: common_sidebar"></div>
+
+
+    <!--content-start-->
+    <div class="container-fluid" id="pcont">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="block-flat">
+                    <div class="header">
+                        <h3>疲劳度</h3>
+                    </div>
+                    <div class="content text-center">
+                        <div id="chart1" class="epie-chart" data-barcolor="#4D90FD" data-trackcolor="#F3F3F3" data-percent="45"><span>0</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!--遮罩-->
+    <div class="md-overlay"></div>
+
+
+</div>
+<!--页脚 start-->
+<div th:include="common/foot2:: common_foot"></div>
+<!--页脚 end-->
+
+<!--myjs-->
+<script type="application/javascript" src="../myjs/cyborg/cyborg.js"></script>
+<script type="application/javascript" src="../myjs/tiredness/tiredness.js"></script>
+</body>
+</html>

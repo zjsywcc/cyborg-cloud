@@ -41,7 +41,7 @@ spring:
 short-url:
    expired-time: 1440 #失效时间 单位为分钟
 log:
-   home: /Users/user/logs
+   home: /Users/zhanghuarui/cyborgLogs
    name: account
 
 

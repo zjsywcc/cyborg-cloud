@@ -478,7 +478,7 @@ var App = function () {
     /*Jquery Easy Pie Chart*/
       $('.epie-chart').easyPieChart({
         barColor: '#FD9C35',
-        trackColor: '#EFEFEF',
+        trackColor: '#50ef49',
         lineWidth: 7,
         animate: 600,
         size: 103,
@@ -636,8 +636,10 @@ var App = function () {
   /*Charts*/
   var charts = function(){
     if (!jQuery.plot) {
+        console.log("going to return!");
       return;
     }
+      console.log("inside chart()!");
     var data = [];
     var totalPoints = 250;
     // random data generator for plot charts
@@ -657,7 +659,6 @@ var App = function () {
       for (var i = 0; i < data.length; ++i) res.push([i, data[i]])
       return res;
     }
-
     function showTooltip(x, y, contents) {
       $("<div id='tooltip'>" + contents + "</div>").css({
         position: "absolute",
@@ -672,12 +673,10 @@ var App = function () {
         "background-color": "#000",
         opacity: 0.80
       }).appendTo("body").fadeIn(200);
-    } 
-
+    }
     function randValue() {
       return (Math.floor(Math.random() * (1 + 50 - 20))) + 10;
     }
-
     var pageviews = [
     [1, randValue()],
     [2, randValue()],
@@ -737,7 +736,7 @@ var App = function () {
     ];
 
     if ($('#site_statistics').size() != 0) {
-
+        console.log("5still inside charts()!");
       $('#site_statistics_loading').hide();
       $('#site_statistics_content').show();
       
@@ -786,7 +785,7 @@ var App = function () {
           tickDecimals: 0
         }
       });
-      
+        console.log("6still inside charts()!");
       var plot_statistics2 = $.plot($("#site_statistics2"), [{
         data: pageviews,
         label: "Unique Visits"
@@ -831,7 +830,7 @@ var App = function () {
           tickDecimals: 0
         }
       });
-      
+        console.log("still inside charts()!");
       /*Pie Chart*/
       var data = [
       { label: "Google", data: 50},
@@ -842,8 +841,8 @@ var App = function () {
       { label: "Apple", data: 13},
       { label: "Amazon", data: 10},
       { label: "Facebook", data: 5}
-      ]; 
-
+      ];
+        console.log("here6!");
       $.plot('#piec', data, {
         series: {
           pie: {
@@ -880,6 +879,7 @@ var App = function () {
       });
       
       /*COM Chart*/
+        console.log("here6!");
       var data_com2 = [
         [1, randValue()],
         [2, randValue()],
@@ -991,7 +991,7 @@ var App = function () {
       });
       
       /*LIVE DATA CHART*/
-      
+      console.log("7still inside");
       var data = [],totalPoints = 200; 
       
       function getRandomData() {
@@ -1014,8 +1014,8 @@ var App = function () {
         res.push([i, data[i]])
         }
         return res;
-      } 
-      
+      }
+        console.log("8still inside");
       function update() {
         chart4.setData([getRandomData()]);
         // Since the axes don't change, we don't need to call plot.setupGrid()
@@ -1113,10 +1113,11 @@ var App = function () {
       }); 
       
       $("#chart3").bind("plothover", function (event, pos, item) {
-      
+
         var str = "(" + pos.x.toFixed(2) + ", " + pos.y.toFixed(2) + ")";
 
         if (item) {
+            console.log("69still inside");
           if (previousPoint != item.dataIndex) {
             previousPoint = item.dataIndex;
             $("#tooltip").remove();
@@ -1133,14 +1134,16 @@ var App = function () {
     }
 
     /*Jquery Easy Pie Chart*/
+      console.log("70still inside");
       $('.epie-chart').easyPieChart({
-        lineWidth: 8,
+        lineWidth: 6,
         animate: 600,
         size: 150,
         onStep: function(val){//Update current value while animation
-          $("span", this.$el).html(parseInt(val) + "%");
+          $("span", this.$el).html(parseInt(val));
         }
         });
+      console.log("71still inside");
       
   };//End of charts
   

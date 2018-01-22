@@ -15,17 +15,24 @@ Inspired by: http://dribbble.com/shots/631074-Simple-Pie-Charts-II?list=popular&
 Thanks to Philip Thrasher for the jquery plugin boilerplate for coffee script
 */
 
-(function($) {
+/*(function($) {
   $.easyPieChart = function(el, options) {
+    console.log("in easyPieChart");
+      console.log(el.id);
     var addScaleLine, animateLine, drawLine, easeInOutQuad, rAF, renderBackground, renderScale, renderTrack,
       _this = this;
+    console.log(el.id);
+ //    console.log(el.percent);
+    //  console.log("1inside easypieChart");
     this.el = el;
     this.$el = $(el);
     this.$el.data("easyPieChart", this);
     this.init = function() {
+   //     console.log("2 inside easypieChart");
       var percent, scaleBy;
       _this.options = $.extend({}, $.easyPieChart.defaultOptions, options);
       percent = parseInt(_this.$el.data('percent'), 10);
+      console.log("percent="+percent);
       _this.percentage = 0;
       _this.canvas = $("<canvas width='" + _this.options.size + "' height='" + _this.options.size + "'></canvas>").get(0);
       _this.$el.append(_this.canvas);
@@ -51,15 +58,20 @@ Thanks to Philip Thrasher for the jquery plugin boilerplate for coffee script
         height: _this.options.size,
         lineHeight: "" + _this.options.size + "px"
       });
+      //  console.log("3inside easypieChart");
       _this.update(percent);
-      return _this;
+      console.log("going to return from ");
+  //   return _this;
     };
+    console.log("test excution");
     this.update = function(percent) {
+        //console.log("4inside easypieChart");
       percent = parseFloat(percent) || 0;
       if (_this.options.animate === false) {
         drawLine(percent);
       } else {
         if (_this.options.delay) {
+          //  console.log("5inside easypieChart");
           animateLine(_this.percentage, 0);
           setTimeout(function() {
             return animateLine(_this.percentage, percent);
@@ -70,6 +82,7 @@ Thanks to Philip Thrasher for the jquery plugin boilerplate for coffee script
       }
       return _this;
     };
+     // console.log("6inside easypieChart");
     renderScale = function() {
       var i, _i, _results;
       _this.ctx.fillStyle = _this.options.scaleColor;
@@ -82,6 +95,7 @@ Thanks to Philip Thrasher for the jquery plugin boilerplate for coffee script
     };
     addScaleLine = function(i) {
       var offset;
+     // console.log("i="+i);
       offset = i % 6 === 0 ? 0 : _this.options.size * 0.017;
       _this.ctx.save();
       _this.ctx.rotate(i * Math.PI / 12);
@@ -115,11 +129,11 @@ Thanks to Philip Thrasher for the jquery plugin boilerplate for coffee script
     drawLine = function(percent) {
       var offset;
       renderBackground();
-	  
+
 	  if(_this.$el.data("barcolor")){
 			_this.options.barColor = _this.$el.data("barcolor");
 	  }
-	  
+
       _this.ctx.strokeStyle = $.isFunction(_this.options.barColor) ? _this.options.barColor(percent) : _this.options.barColor;
       _this.ctx.lineCap = _this.options.lineCap;
       _this.ctx.lineWidth = _this.options.lineWidth;
@@ -178,6 +192,7 @@ Thanks to Philip Thrasher for the jquery plugin boilerplate for coffee script
       t /= d / 2;
       return c / 2 * easing(t) + b;
     };
+     // console.log("7inside easypieChart");
     return this.init();
   };
   $.easyPieChart.defaultOptions = {
@@ -204,5 +219,226 @@ Thanks to Philip Thrasher for the jquery plugin boilerplate for coffee script
       }
     });
   };
-  return void 0;
-})(jQuery);
+    console.log("going back with 0");
+  return 0;
+
+})(jQuery);*/
+var flag=true;
+var temp;
+  $.easyPieChart = function(el, options) {
+    console.log("in easyPieChart");
+      console.log(el.id);
+    var addScaleLine, animateLine, drawLine, easeInOutQuad, rAF, renderBackground, renderScale, renderTrack,
+      _this = this;
+
+    console.log(flag);
+ //    console.log(el.percent);
+    //  console.log("1inside easypieChart");
+    this.el = el;
+    this.$el = $(el);
+    this.$el.data("easyPieChart", this);
+    this.init = function() {
+      flag=false;
+   //     console.log("2 inside easypieChart");
+      var percent, scaleBy;
+      _this.options = $.extend({}, $.easyPieChart.defaultOptions, options);
+      var arr=document.getElementsByClassName("epie-chart");
+        //    alert(arr[0].attributes["data-percent"].value);
+        percent = arr[0].attributes["data-percent"].value;
+     // percent = parseInt(_this.$el.data('percent'), 10);
+      //console.log("percent="+percent);
+      _this.percentage = 0;
+      _this.canvas = $("<canvas width='" + _this.options.size + "' height='" + _this.options.size + "'></canvas>").get(0);
+      _this.$el.append(_this.canvas);
+      if (typeof G_vmlCanvasManager !== "undefined" && G_vmlCanvasManager !== null) {
+        G_vmlCanvasManager.initElement(_this.canvas);
+      }
+      _this.ctx = _this.canvas.getContext('2d');
+      if (window.devicePixelRatio > 1) {
+        scaleBy = window.devicePixelRatio;
+        $(_this.canvas).css({
+          width: _this.options.size,
+          height: _this.options.size
+        });
+        _this.canvas.width *= scaleBy;
+        _this.canvas.height *= scaleBy;
+        _this.ctx.scale(scaleBy, scaleBy);
+      }
+      _this.ctx.translate(_this.options.size / 2, _this.options.size / 2);
+      _this.ctx.rotate(_this.options.rotate * Math.PI / 180);
+      _this.$el.addClass('easyPieChart');
+      _this.$el.css({
+        width: _this.options.size,
+        height: _this.options.size,
+        lineHeight: "" + _this.options.size + "px"
+      });
+        console.log("ready to update");
+      _this.update(percent);
+       temp=percent;
+       return _this;
+    };
+
+    this.update = function(percent) {
+
+      percent = parseFloat(percent) || 0;
+      if (_this.options.animate === false) {
+        drawLine(percent);
+      } else {
+        if (_this.options.delay) {
+
+          animateLine(_this.percentage, 0);
+          setTimeout(function() {
+            return animateLine(_this.percentage, percent);
+          }, _this.options.delay);
+        } else {
+          animateLine(_this.percentage, percent);
+        }
+      }
+      return _this;
+    };
+    renderScale = function() {
+      var i, _i, _results;
+      _this.ctx.fillStyle = _this.options.scaleColor;
+      _this.ctx.lineWidth = 1;
+      _results = [];
+      for (i = _i = 0; _i <= 24; i = ++_i) {
+        _results.push(addScaleLine(i));
+      }
+      return _results;
+    };
+    addScaleLine = function(i) {
+      var offset;
+     // console.log("i="+i);
+      offset = i % 6 === 0 ? 0 : _this.options.size * 0.017;
+      _this.ctx.save();
+      _this.ctx.rotate(i * Math.PI / 12);
+      _this.ctx.fillRect(_this.options.size / 2 - offset, 0, -_this.options.size * 0.05 + offset, 1);
+      _this.ctx.restore();
+    };
+    renderTrack = function() {
+      var offset;
+      offset = _this.options.size / 2 - _this.options.lineWidth / 2;
+      if (_this.options.scaleColor !== false) {
+        offset -= _this.options.size * 0.08;
+      }
+      _this.ctx.beginPath();
+      _this.ctx.arc(0, 0, offset, 0, Math.PI * 2, true);
+      _this.ctx.closePath();
+	  if(_this.$el.data("trackcolor")){
+			_this.options.trackColor = _this.$el.data("trackcolor");
+	  }
+      _this.ctx.strokeStyle = _this.options.trackColor;
+      _this.ctx.lineWidth = _this.options.lineWidth;
+      _this.ctx.stroke();
+    };
+    renderBackground = function() {
+      if (_this.options.scaleColor !== false) {
+        //  console.log("scaleColor"+_this.options.scaleColor);
+        renderScale();
+      }
+      if (_this.options.trackColor !== false) {
+        //console.log("trackColor_"+_this.options.trackColor);
+        renderTrack();
+      }
+    };
+    drawLine = function(percent) {
+      var offset;
+      renderBackground();
+
+	  if(_this.$el.data("barcolor")){
+			_this.options.barColor = _this.$el.data("barcolor");
+	  }
+
+      _this.ctx.strokeStyle = $.isFunction(_this.options.barColor) ? _this.options.barColor(percent) : _this.options.barColor;
+      _this.ctx.lineCap = _this.options.lineCap;
+      _this.ctx.lineWidth = _this.options.lineWidth;
+      offset = _this.options.size / 2 - _this.options.lineWidth / 2;
+      if (_this.options.scaleColor !== false) {
+        offset -= _this.options.size * 0.08;
+      }
+      _this.ctx.save();
+      _this.ctx.rotate(-Math.PI / 2);
+      _this.ctx.beginPath();
+      _this.ctx.arc(0, 0, offset, 0, Math.PI * 2 * percent / 100, false);
+      _this.ctx.stroke();
+      _this.ctx.restore();
+    };
+    rAF = (function() {
+      return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function(callback) {
+        return window.setTimeout(callback, 1000 / 60);
+      };
+    })();
+    animateLine = function(from, to) {
+      var anim, startTime;
+      _this.options.onStart.call(_this);
+      _this.percentage = to;
+      Date.now || (Date.now = function() {
+        return +(new Date);
+      });
+      startTime = Date.now();
+      anim = function() {
+        var currentValue, process;
+        process = Math.min(Date.now() - startTime, _this.options.animate);
+        _this.ctx.clearRect(-_this.options.size / 2, -_this.options.size / 2, _this.options.size, _this.options.size);
+        renderBackground.call(_this);
+        console.log("from to="+from+" "+to);
+        from=temp;
+        console.log("from should be changed");
+        currentValue = [easeInOutQuad(process, from, to - from, _this.options.animate)];
+        console.log(currentValue);
+        _this.options.onStep.call(_this, currentValue);
+        console.log("1");
+        drawLine.call(_this, currentValue);
+        console.log("2");
+        if (process >= _this.options.animate) {
+          return _this.options.onStop.call(_this, currentValue, to);
+        } else {
+          return rAF(anim);
+        }
+      };
+      rAF(anim);
+    };
+    easeInOutQuad = function(t, b, c, d) {
+      var easeIn, easing;
+      easeIn = function(t) {
+        return Math.pow(t, 2);
+      };
+      easing = function(t) {
+        if (t < 1) {
+          return easeIn(t);
+        } else {
+          return 2 - easeIn((t / 2) * -2 + 2);
+        }
+      };
+      t /= d / 2;
+      return c / 2 * easing(t) + b;
+    };
+     // console.log("7inside easypieChart");
+    return this.init();
+  };
+  $.easyPieChart.defaultOptions = {
+    barColor: '#ef1e25',
+    trackColor: '#f2f2f2',
+    scaleColor: '#dfe0e0',
+    lineCap: 'round',
+    rotate: 0,
+    size: 110,
+    lineWidth: 3,
+    animate: false,
+    delay: false,
+    onStart: $.noop,
+    onStop: $.noop,
+    onStep: $.noop
+  };
+  $.fn.easyPieChart = function(options) {
+    console.log(" return from fn");
+    return $.each(this, function(i, el) {
+      console.log("in each");
+      var $el, instanceOptions;
+      $el = $(el);
+        instanceOptions = $.extend({}, options, $el.data());
+        console.log("return from function(i,el)");
+        return $el.data('easyPieChart', new $.easyPieChart(el, instanceOptions));
+    });
+  };
+

@@ -37,7 +37,8 @@ function login() {
         success : function(e) {
              //登录成功
              if(e.code == 0){
-                 location.href = "../cyborg/index";
+               //  window.location="../tiredness/index";
+               location.href = "../cyborg/index";
              }
              //登录失败
              if(e.code == -1){

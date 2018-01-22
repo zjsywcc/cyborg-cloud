@@ -45,8 +45,45 @@ public class MonitorController {
     @ResponseBody
     public String getCyborgEMG(@RequestParam long startTime) {
 
+        final class EMGInfo {
+            long timestamp;
+            double value;
+
+            public long getTimestamp() {
+                return timestamp;
+            }
+
+            public void setTimestamp(long timestamp) {
+                this.timestamp = timestamp;
+            }
+
+            public double getValue() {
+                return value;
+            }
+
+            public void setValue(double value) {
+                this.value = value;
+            }
+        }
         try {
-            List<MonitorEMGInfo> emgInfos = monitorEMGInfoService.findByIsReadAndUpdate(false, startTime);
+            List<EMGInfo> emgInfos = new ArrayList<>();
+            long timestamp = new Date().getTime();
+            for(int i = 0; i < 3; i++) {
+                double fakeEMG = Math.random() * 70;
+                EMGInfo emgInfo = new EMGInfo();
+                emgInfo.setTimestamp(timestamp);
+                emgInfo.setValue(fakeEMG);
+                emgInfos.add(emgInfo);
+                timestamp += 500;
+            }
+            return ReturnData.result(0, "获取申请统计数据成功", JSON.toJSONString(emgInfos));
+        } catch (Exception e) {
+            logger.error("获取申请统计数据失败：", e);
+            return ReturnData.result(-1, "获取申请统计数据失败", null);
+        }
+    }
+      //  try {
+        //    List<MonitorEMGInfo> emgInfos = monitorEMGInfoService.findByIsReadAndUpdate(false, startTime);
             /**
              * fake data processing
              */
@@ -59,12 +96,12 @@ public class MonitorController {
 //                emgInfos.add(emgInfo);
 //                timestamp += 500;
 //            }
-            return ReturnData.result(0, "获取申请统计数据成功", JSON.toJSONString(emgInfos));
-        } catch (Exception e) {
-            logger.error("获取申请统计数据失败：", e);
-            return ReturnData.result(-1, "获取申请统计数据失败", null);
-        }
-    }
+          //  return ReturnData.result(0, "获取申请统计数据成功", JSON.toJSONString(emgInfos));
+        //} catch (Exception e) {
+          //  logger.error("获取申请统计数据失败：", e);
+            //return ReturnData.result(-1, "获取申请统计数据失败", null);
+        //}
+    //}
 
     @RequestMapping(value = "/getCyborgStatus", method = RequestMethod.POST)
     @ResponseBody
