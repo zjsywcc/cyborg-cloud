@@ -1,4 +1,4 @@
-package com.ese.cloud.client.controller.core;
+package com.ese.cloud.client.controller.app;
 
 import com.alibaba.fastjson.JSON;
 import com.ese.cloud.client.entity.CyborganCoordinate;

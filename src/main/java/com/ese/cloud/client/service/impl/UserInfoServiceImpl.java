@@ -4,7 +4,6 @@ import com.ese.cloud.client.contants.GlobleVariable;
 import com.ese.cloud.client.dao.UserInfoDao;
 import com.ese.cloud.client.entity.UserInfo;
 import com.ese.cloud.client.service.UserInfoService;
-import com.ese.cloud.client.util.EmailServer;
 import com.ese.cloud.client.util.PasswordUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.crypto.hash.Md5Hash;
