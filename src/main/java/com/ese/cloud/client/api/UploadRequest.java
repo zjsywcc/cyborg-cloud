@@ -21,7 +21,7 @@ public class UploadRequest extends BaseMobileRequest {
 
         private long timestamp;
 
-        private float value;
+        private String packet;
 
         public long getTimestamp() {
             return timestamp;
@@ -31,12 +31,12 @@ public class UploadRequest extends BaseMobileRequest {
             this.timestamp = timestamp;
         }
 
-        public float getValue() {
-            return value;
+        public String getPacket() {
+            return packet;
         }
 
-        public void setValue(float value) {
-            this.value = value;
+        public void setPacket(String packet) {
+            this.packet = packet;
         }
     }
 }

@@ -1,21 +1,30 @@
 package com.ese.cloud.client.entity;
 
 /**
- * Created by wangchengcheng on 2017/11/9.
+ * Created by wangchengcheng on 2018/1/27.
  */
-public class MonitorEMGInfo {
+public class BiosignalInfo {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * EMG记录id
+     * 生理信号记录id
      */
     private String id;
 
+    /**
+     * 产生时间戳
+     */
     private long timestamp;
 
-    private double emgValue;
+    /**
+     * 生理信号HEX字符串
+     */
+    private String packet;
 
+    /**
+     * 是否已经展示过
+     */
     private boolean isRead;
 
     public String getId() {
@@ -34,12 +43,12 @@ public class MonitorEMGInfo {
         this.timestamp = timestamp;
     }
 
-    public double getEmgValue() {
-        return emgValue;
+    public String getPacket() {
+        return packet;
     }
 
-    public void setEmgValue(double emgValue) {
-        this.emgValue = emgValue;
+    public void setPacket(String packet) {
+        this.packet = packet;
     }
 
     public boolean isRead() {
@@ -48,15 +57,5 @@ public class MonitorEMGInfo {
 
     public void setRead(boolean read) {
         isRead = read;
-    }
-
-    @Override
-    public String toString() {
-        return "MonitorEMGInfo{" +
-                "id='" + id + '\'' +
-                ", timestamp=" + timestamp +
-                ", emgValue=" + emgValue +
-                ", isRead=" + isRead +
-                '}';
     }
 }

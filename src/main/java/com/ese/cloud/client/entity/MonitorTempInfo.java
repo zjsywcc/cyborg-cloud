@@ -1,9 +1,9 @@
 package com.ese.cloud.client.entity;
 
 /**
- * Created by wangchengcheng on 2017/11/9.
+ * Created by wangchengcheng on 2018/1/28.
  */
-public class MonitorEMGInfo {
+public class MonitorTempInfo {
 
     private static final long serialVersionUID = 1L;
 
@@ -14,7 +14,7 @@ public class MonitorEMGInfo {
 
     private long timestamp;
 
-    private double emgValue;
+    private double tempValue;
 
     private boolean isRead;
 
@@ -34,12 +34,12 @@ public class MonitorEMGInfo {
         this.timestamp = timestamp;
     }
 
-    public double getEmgValue() {
-        return emgValue;
+    public double getTempValue() {
+        return tempValue;
     }
 
-    public void setEmgValue(double emgValue) {
-        this.emgValue = emgValue;
+    public void setTempValue(double tempValue) {
+        this.tempValue = tempValue;
     }
 
     public boolean isRead() {
@@ -52,10 +52,10 @@ public class MonitorEMGInfo {
 
     @Override
     public String toString() {
-        return "MonitorEMGInfo{" +
+        return "MonitorTempInfo{" +
                 "id='" + id + '\'' +
                 ", timestamp=" + timestamp +
-                ", emgValue=" + emgValue +
+                ", tempValue=" + tempValue +
                 ", isRead=" + isRead +
                 '}';
     }

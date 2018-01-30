@@ -26,7 +26,7 @@ spring:
       generate-ddl: true
    data:
       mongodb:
-        uri: mongodb://127.0.0.1:27017/passport-updatephone
+        uri: mongodb://127.0.0.1:27017/cyborg_cloud
 #        uri: mongodb://127.0.0.1:27017/hunter
    http:
       multipart:

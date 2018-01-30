@@ -1,43 +1,43 @@
 package com.ese.cloud.client.dao;
 
-import com.ese.cloud.client.entity.MonitorEMGInfo;
+import com.ese.cloud.client.entity.BiosignalInfo;
 import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.List;
 
 /**
- * Created by wangchengcheng on 2017/11/9.
+ * Created by wangchengcheng on 2018/1/27.
  */
-public interface MonitorEMGInfoDao {
+public interface BiosignalInfoDao {
 
     /**
      * 添加EMG信息
-     * @param monitorEMGInfo
-     * @return 
+     * @param biosignalInfo
+     * @return
      */
-    public boolean add(MonitorEMGInfo monitorEMGInfo);
+    public boolean add(BiosignalInfo biosignalInfo);
 
 
     /**
      * 批量添加EMG信息
-     * @param monitorEMGInfos
+     * @param biosignalInfos
      * @return
      */
-    public boolean addAll(List<MonitorEMGInfo> monitorEMGInfos);
+    public boolean addAll(List<BiosignalInfo> biosignalInfos);
 
     /**
      * 查询EMG信息
      * @param query
      * @return
      */
-    public List<MonitorEMGInfo> findByQuery(Query query);
+    public List<BiosignalInfo> findByQuery(Query query);
 
     /**
      * 查询一个EMG信息
      * @param query
      * @return
      */
-    public MonitorEMGInfo findOneByQuery(Query query);
+    public BiosignalInfo findOneByQuery(Query query);
 
     /**
      * 删除EMG信息
@@ -48,10 +48,10 @@ public interface MonitorEMGInfoDao {
 
     /**
      * 修改EMG信息
-     * @param monitorEMGInfo
+     * @param biosignalInfo
      * @return
      */
-    public boolean update(MonitorEMGInfo monitorEMGInfo);
+    public boolean update(BiosignalInfo biosignalInfo);
 
     /**
      * 计算总数

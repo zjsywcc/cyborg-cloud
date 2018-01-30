@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zn"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<!--页头 start-->
+<head>
+    <div th:replace="common/header2:: common_header"></div>
+</head>
+
+<!--页头 end-->
+<body>
+<!-- Fixed navbar -->
+<div th:include="common/navbar:: common_navbar"></div>
+
+<div id="cl-wrapper">
+    <div th:replace="common/sidebar:: common_sidebar"></div>
+
+
+    <!--content-start-->
+    <div class="container-fluid" id="pcont">
+        <div class="cl-mcont">
+
+            <div class="row dash-cols">
+                <div class="col-sm-6 col-md-6">
+                    <div class="widget-block  white-box calendar-box">
+                        <div class="col-md-6 blue-box calendar no-padding">
+                            <div class="padding ui-datepicker"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="padding">
+                                <h2 class="text-center">Wednesday</h2>
+                                <h1 class="day">3</h1>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="col-sm-6 col-md-6">
+                    <form class="form-horizontal group-border-dashed" action="#" style="border-radius: 0px;">
+                        <div class="form-group">
+
+                            <div class="col-sm-8">
+                                <input type="text" id="searchName" class="form-control"/>
+
+                            </div>
+                            <label class="control-label"></label>
+                            <button type="button" class="btn btn-primary">
+                                搜索电子人
+                            </button>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="stats_bar">
+                    <div class="butpro butstyle" data-step="2" data-intro="">
+                        <div class="sub"><h2>电子人名称</h2><span id="total_clientes">TestCyborg</span></div>
+                        <div class="stat"><span class="equal"></span></div>
+                    </div>
+                    <div class="butpro butstyle">
+                        <div class="sub"><h2>在线状态</h2><span>在线</span></div>
+                        <div class="stat"><span class="up"></span></div>
+                    </div>
+                    <div class="butpro butstyle">
+                        <div class="sub"><h2>疲劳状态</h2><span id="fatigue">清醒</span></div>
+                        <div class="stat"><span class="up"></span></div>
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+            <div class="row dash-cols">
+
+                <div class="col-sm-6 col-md-6">
+                    <div class="block">
+                        <div class="header no-border">
+                            <h2>历史数据</h2>
+                        </div>
+                        <!--<div class="content blue-chart" data-step="3" data-intro="">-->
+                            <!--<div id="site_statistics" style="height:180px;"></div>-->
+                        <!--</div>-->
+                        <img src="../images/lishi.png" style="height:240px;width:560px"/>
+                        <div class="content">
+                            <div class="stat-data">
+                                <div class="stat-blue">
+                                    <h2>1,254</h2>
+                                    <span>总记录数据</span>
+                                </div>
+                            </div>
+                            <div class="stat-data">
+                                <div class="stat-number">
+                                    <div class="col-sm-2">
+                                        <label class=" control-label">传感器</label>
+                                        <select id="selectDriverType" class="form-control">
+                                            <option>脑电</option>
+                                            <option>肌电</option>
+                                            <option>体温</option>
+                                            <option>呼吸</option>
+                                        </select>
+                                        <input type="hidden" id="searchBiosignalType" class="form-control"/>
+                                    </div>
+                                </div>
+                                <div class="stat-number">
+                                    <div><h2>体温数据</h2></div>
+                                </div>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-md-6">
+                    <div class="block">
+                        <div class="header no-border">
+                            <h2>实时监控</h2>
+                        </div>
+                        <!--<div class="content red-chart">-->
+                            <!--<div id="site_statistics2" style="height:152px;"></div>-->
+                        <!--</div>-->
+                        <img src="../images/shishi.png" style="height:200px;width:560px"/>
+                        <div class="content no-padding">
+                            <table class="red">
+                                <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th class="right">数值</th>
+                                </tr>
+                                </thead>
+                                <tbody class="no-border-x">
+                                <tr>
+                                    <td>体温</td>
+                                    <td class="text-right">24.5</td>
+                                </tr>
+                                <tr>
+                                    <td style="width:40%;">脑电</td>
+                                    <td class="text-right">0,2%</td>
+                                </tr>
+                                <tr>
+                                    <td>肌电</td>
+                                    <td class="text-right">0,2%</td>
+                                </tr>
+                                <tr>
+                                    <td>呼吸</td>
+                                    <td class="text-right">0,2%</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+        <!--content-end-->
+
+
+    </div>
+
+    <!--遮罩-->
+    <div class="md-overlay"></div>
+
+
+</div>
+<!--页脚 start-->
+<div th:include="common/foot2:: common_foot"></div>
+<!--页脚 end-->
+
+<!--myjs-->
+<script type="application/javascript" src="../myjs/screen/screen.js"></script>
+</body>
+</html>
