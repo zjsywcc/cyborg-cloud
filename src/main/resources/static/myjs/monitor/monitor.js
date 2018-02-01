@@ -1,6 +1,10 @@
 $(document).ready(function () {
-
-    var emgArray = [], ajaxInterval = 1000, dataInterval = 1000, dataSetLength = 20;
+    /**-----------------------------------------------------------------**/
+    /**
+     * 肌电信号处理开始
+     * @type {Array}
+     */
+    var emgTimeArray = [], emgArray = [], ajaxInterval = 1000, dataInterval = 1000, dataSetLength = 20;
 
     /**
      * 调节界面chart更新速度和后台数据获取速度不一致的偏差
@@ -24,12 +28,9 @@ $(document).ready(function () {
      */
     var lastStartTime = getCurrentTimestamp() - dataSetLength * dataInterval * 8;
 
-    /**
-     *实时获取电子人肌电信号数据
-     */
-    function getCyborgEMG(startTime) {
+    function getBiosignal(url, updateFunction, startTime) {
         $.ajax({
-            url: "../monitor/getCyborgEMG",
+            url: url,
             dataType: "json",
             type: "POST",
             async: true,
@@ -40,14 +41,11 @@ $(document).ready(function () {
                 console.log(error.responseText);
             },
             success: function (e) {
-                if (e.code == 0) {
-                    // console.log(e.data)
-                    var emgPacket = JSON.parse(e.data);
-                    if (emgPacket.length > 0) {
-                        // lastStartTime = emgPacket[emgPacket.length - 1].timestamp - dataSetLength * dataInterval;
-                        console.log("emgPacket");
-                        console.log(emgPacket);
-                        refreshLoop(updateEMG, emgPacket, emgPacket.length);
+                if (e.code === 0) {
+                    console.log(e.data);
+                    var packet = JSON.parse(e.data);
+                    if (packet.length > 0) {
+                        refreshLoop(updateFunction, packet, packet.length);
                     } else {
                         console.log("没有新的数据");
                     }
@@ -60,6 +58,13 @@ $(document).ready(function () {
                 }
             }
         });
+    }
+
+    /**
+     *实时获取电子人肌电信号数据
+     */
+    function getCyborgEMG(startTime) {
+        getBiosignal('../monitor/getCyborgEMG', updateEMG, startTime);
     }
 
     /**
@@ -89,7 +94,7 @@ $(document).ready(function () {
             // if ((getCurrentTimestamp() - lastStartTime) > dataSetLength * dataInterval) {
             //     setTimeout(interv, updateDelta);
             // } else {
-                setTimeout(interv, array[index].timestamp - now);
+            setTimeout(interv, array[index].timestamp - now);
             // }
         };
         var now = new Date().getTime();
@@ -101,6 +106,89 @@ $(document).ready(function () {
         }
     }
 
+    /**
+     * 使用echart绘制实时折线图
+     * @param x
+     * @param y
+     * @param yName
+     * @param yUnit
+     * @param domName
+     */
+    function drawChart(x, y, yName, yUnit, domName) {
+        // 基于准备好的dom，初始化echarts图表
+        var myChart = echarts.init(document.getElementById(domName));
+        var option = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross',
+                    animation: true,
+                    label: {
+                        backgroundColor: '#1da2d4'
+                    }
+
+                }
+            },
+            legend: {
+                data: [yName]
+            },
+            toolbox: {
+                show: true,
+                feature: {
+                    dataView: {readOnly: false},
+                    restore: {},
+                    saveAsImage: {}
+                }
+            },
+            dataZoom: {
+                show: false,
+                start: 0,
+                end: 100
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    boundaryGap: true,
+                    data: x,
+                    axisLabel: {
+                        formatter: function (value) {
+                            // 格式化成月/日，只在第一个刻度显示年份
+                            return timestampToString(parseInt(value));
+                        }
+                    }
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    scale: true,
+                    name: yUnit,
+                    boundaryGap: [0.2, 0.2]
+                }
+            ],
+            series: [
+                {
+                    name: yName,
+                    type: "line",
+                    data: y,
+                    smooth: true,
+                    itemStyle: {
+                        normal: {
+                            color: '#1da2d4'
+                        }
+                    }
+                }
+            ]
+        };
+
+        // 为echarts对象加载数据
+        myChart.setOption(option);
+    }
+
+    function timestampToString(timestamp) {
+        return new Date(timestamp).toLocaleTimeString().replace(/^\D*/, '');
+    }
+
 
     /**
      * 根据获取得到的肌电信号的值重绘实时图
@@ -109,78 +197,24 @@ $(document).ready(function () {
     function updateEMG(value) {
         if (emgArray.length > dataSetLength) {
             emgArray = emgArray.slice(1);
+            emgTimeArray = emgTimeArray.slice(1);
         }
-        if (emgArray.length === 0 || value.timestamp > emgArray[emgArray.length - 1][0]) {
-            emgArray.push([value.timestamp, value.emgValue]);
-            console.log("update " + value.timestamp + value.emgValue);
-            $.plot($("#chartEMG"), [{
-                data: emgArray,
-                label: "Sales"
-            }
-            ], {
-                series: {
-                    lines: {
-                        show: true,
-                        lineWidth: 2,
-                        fill: true,
-                        fillColor: {
-                            colors: [{
-                                opacity: 0.25
-                            }, {
-                                opacity: 0.25
-                            }
-                            ]
-                        }
-                    },
-                    points: {
-                        show: false
-                    },
-                    shadowSize: 2
-                },
-                legend: {
-                    show: false
-                },
-                grid: {
-                    labelMargin: 10,
-                    axisMargin: 500,
-                    hoverable: true,
-                    clickable: true,
-                    tickColor: "rgba(0,0,0,0.15)",
-                    borderWidth: 0
-                },
-                colors: ["#B450B2", "#4A8CF7", "#52e136"],
-                xaxis: {
-                    mode: "time",
-                    tickSize: [1, "second"],
-                    tickFormatter: function (v, axis) {
-                        var date = new Date(v);
-
-                        if (date.getSeconds() % 5 == 0) {
-                            var hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
-                            var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
-                            var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-
-                            return hours + ":" + minutes + ":" + seconds;
-                        } else {
-                            return "";
-                        }
-                    },
-                    axisLabel: "Time",
-                    axisLabelUseCanvas: true,
-                    axisLabelFontSizePixels: 12,
-                    axisLabelFontFamily: 'Verdana, Arial',
-                    axisLabelPadding: 10
-                },
-                yaxis: {
-                    ticks: 5,
-                    tickDecimals: 0
-                }
-            });
+        if (emgArray.length === 0 || value.timestamp > emgTimeArray[emgTimeArray.length - 1]) {
+            console.log("push emgValue " + value.emgValue);
+            emgArray.push(value.emgValue);
+            emgTimeArray.push(value.timestamp);
+            console.log("update emgValue" + value.timestamp + " " + value.emgValue);
+            console.log("emgArray print " + emgArray);
+            console.log("emgTimeArray print " + emgTimeArray);
+            drawChart(emgTimeArray, emgArray, '放大后的肌电信号', '电压', 'chartEMG');
+        } else {
+            console.log("emgArray Length " + emgArray.length);
+            console.log("emgTimestamp " + value.timestamp + " --- " + "emgTimeArray last timestamp " + emgTimeArray[emgTimeArray.length - 1]);
         }
     }
 
     /**
-     * 获取比当前时间的时间戳
+     * 获取当前时间的时间戳
      * @returns {number}
      */
     function getCurrentTimestamp() {
@@ -188,313 +222,105 @@ $(document).ready(function () {
         return timestamp;
     }
 
+
+    /**-----------------------------------------------------------------**/
     /**
-     * 设置定时器，每隔一定时间发送异步请求
+     * 呼吸信号处理开始
+     * @type {Array}
      */
-    getCyborgEMG(lastStartTime);
-    setInterval(function () {
-        // if(!drawing) {
-        getCyborgEMG(lastStartTime);
-        // }
-    }, ajaxInterval);
 
-
-
-
-    var rrArray = [];
+    var rrTimeArray = [], rrArray = [];
 
 
     /**
      *实时获取电子人呼吸信号数据
      */
     function getCyborgRR(startTime) {
-        $.ajax({
-            url: "../monitor/getCyborgRR",
-            dataType: "json",
-            type: "POST",
-            async: true,
-            data: {
-                startTime: startTime
-            },
-            error: function (error) {
-                console.log(error.responseText);
-            },
-            success: function (e) {
-                if (e.code == 0) {
-                    // console.log(e.data)
-                    var rrPacket = JSON.parse(e.data);
-                    if (rrPacket.length > 0) {
-                        // lastStartTime = rrPacket[rrPacket.length - 1].timestamp - dataSetLength * dataInterval;
-                        console.log("rrPacket");
-                        console.log(rrPacket);
-                        refreshLoop(updateRR, rrPacket, rrPacket.length);
-                    } else {
-                        console.log("没有新的数据");
-                    }
-                } else {
-                    $.gritter.add({
-                        title: '执行失败',
-                        text: e.msg,
-                        class_name: 'danger'
-                    });
-                }
-            }
-        });
+        getBiosignal('../monitor/getCyborgRR', updateRR, startTime);
     }
 
 
-
     /**
-     * 根据获取得到的肌电信号的值重绘实时图
+     * 根据获取得到的呼吸信号的值重绘实时图
      * @param value
      */
     function updateRR(value) {
         if (rrArray.length > dataSetLength) {
             rrArray = rrArray.slice(1);
+            rrTimeArray = rrTimeArray.slice(1);
         }
-        if (rrArray.length === 0 || value.timestamp > rrArray[rrArray.length - 1][0]) {
-            rrArray.push([value.timestamp, value.rrValue]);
+        if (rrArray.length === 0 || value.timestamp > rrTimeArray[rrTimeArray.length - 1]) {
+            rrArray.push(value.rrValue);
+            rrTimeArray.push(value.timestamp);
             console.log("update " + value.timestamp + value.rrValue);
-            $.plot($("#chartRR"), [{
-                data: rrArray,
-                label: "Sales"
-            }
-            ], {
-                series: {
-                    lines: {
-                        show: true,
-                        lineWidth: 2,
-                        fill: true,
-                        fillColor: {
-                            colors: [{
-                                opacity: 0.25
-                            }, {
-                                opacity: 0.25
-                            }
-                            ]
-                        }
-                    },
-                    points: {
-                        show: false
-                    },
-                    shadowSize: 2
-                },
-                legend: {
-                    show: false
-                },
-                grid: {
-                    labelMargin: 10,
-                    axisMargin: 500,
-                    hoverable: true,
-                    clickable: true,
-                    tickColor: "rgba(0,0,0,0.15)",
-                    borderWidth: 0
-                },
-                colors: ["#B450B2", "#4A8CF7", "#52e136"],
-                xaxis: {
-                    mode: "time",
-                    tickSize: [1, "second"],
-                    tickFormatter: function (v, axis) {
-                        var date = new Date(v);
-
-                        if (date.getSeconds() % 5 == 0) {
-                            var hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
-                            var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
-                            var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-
-                            return hours + ":" + minutes + ":" + seconds;
-                        } else {
-                            return "";
-                        }
-                    },
-                    axisLabel: "Time",
-                    axisLabelUseCanvas: true,
-                    axisLabelFontSizePixels: 12,
-                    axisLabelFontFamily: 'Verdana, Arial',
-                    axisLabelPadding: 10
-                },
-                yaxis: {
-                    ticks: 5,
-                    tickDecimals: 0
-                }
-            });
+            drawChart(rrTimeArray, rrArray, '放大后的呼吸信号', '呼吸压', 'chartRR');
         }
     }
 
+
+    /**-----------------------------------------------------------------**/
     /**
-     * 获取比当前时间的时间戳
-     * @returns {number}
+     * 体温信号处理开始
+     * @type {Array}
      */
-    function getCurrentTimestamp() {
-        var timestamp = new Date().getTime();
-        return timestamp;
-    }
-
-    /**
-     * 设置定时器，每隔一定时间发送异步请求
-     */
-    getCyborgRR(lastStartTime);
-    setInterval(function () {
-        // if(!drawing) {
-        getCyborgRR(lastStartTime);
-        // }
-    }, ajaxInterval);
-
-    var tempArray = [];
+    var tempTimeArray = [], tempArray = [];
 
 
     /**
-     *实时获取电子人呼吸信号数据
+     *实时获取电子人体温信号数据
      */
     function getCyborgTemp(startTime) {
-        $.ajax({
-            url: "../monitor/getCyborgTemp",
-            dataType: "json",
-            type: "POST",
-            async: true,
-            data: {
-                startTime: startTime
-            },
-            error: function (error) {
-                console.log(error.responseText);
-            },
-            success: function (e) {
-                if (e.code == 0) {
-                    // console.log(e.data)
-                    var tempPacket = JSON.parse(e.data);
-                    if (tempPacket.length > 0) {
-                        // lastStartTime = tempPacket[tempPacket.length - 1].timestamp - dataSetLength * dataInterval;
-                        console.log("tempPacket");
-                        console.log(tempPacket);
-                        refreshLoop(updateTemp, tempPacket, tempPacket.length);
-                    } else {
-                        console.log("没有新的数据");
-                    }
-                } else {
-                    $.gritter.add({
-                        title: '执行失败',
-                        text: e.msg,
-                        class_name: 'danger'
-                    });
-                }
-            }
-        });
+        getBiosignal('../monitor/getCyborgTemp', updateTemp, startTime);
     }
 
 
-
     /**
-     * 根据获取得到的肌电信号的值重绘实时图
+     * 根据获取得到的体温信号的值重绘实时图
      * @param value
      */
     function updateTemp(value) {
         if (tempArray.length > dataSetLength) {
             tempArray = tempArray.slice(1);
+            tempTimeArray = tempTimeArray.slice(1);
         }
-        if (tempArray.length === 0 || value.timestamp > tempArray[tempArray.length - 1][0]) {
-            tempArray.push([value.timestamp, value.tempValue]);
+        if (tempArray.length === 0 || value.timestamp > tempTimeArray[tempTimeArray.length - 1]) {
+            tempArray.push(value.tempValue);
+            tempTimeArray.push(value.timestamp);
             console.log("update " + value.timestamp + value.tempValue);
-            $.plot($("#chartTemp"), [{
-                data: tempArray,
-                label: "Sales"
-            }
-            ], {
-                series: {
-                    lines: {
-                        show: true,
-                        lineWidth: 2,
-                        fill: true,
-                        fillColor: {
-                            colors: [{
-                                opacity: 0.25
-                            }, {
-                                opacity: 0.25
-                            }
-                            ]
-                        }
-                    },
-                    points: {
-                        show: false
-                    },
-                    shadowSize: 2
-                },
-                legend: {
-                    show: false
-                },
-                grid: {
-                    labelMargin: 10,
-                    axisMargin: 500,
-                    hoverable: true,
-                    clickable: true,
-                    tickColor: "rgba(0,0,0,0.15)",
-                    borderWidth: 0
-                },
-                colors: ["#B450B2", "#4A8CF7", "#52e136"],
-                xaxis: {
-                    mode: "time",
-                    tickSize: [1, "second"],
-                    tickFormatter: function (v, axis) {
-                        var date = new Date(v);
-
-                        if (date.getSeconds() % 5 == 0) {
-                            var hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
-                            var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
-                            var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-
-                            return hours + ":" + minutes + ":" + seconds;
-                        } else {
-                            return "";
-                        }
-                    },
-                    axisLabel: "Time",
-                    axisLabelUseCanvas: true,
-                    axisLabelFontSizePixels: 12,
-                    axisLabelFontFamily: 'Verdana, Arial',
-                    axisLabelPadding: 10
-                },
-                yaxis: {
-                    ticks: 5,
-                    tickDecimals: 0
-                }
-            });
+            drawChart(tempTimeArray, tempArray, '体温信号', '温度', 'chartTemp');
         }
     }
 
-    /**
-     * 获取比当前时间的时间戳
-     * @returns {number}
-     */
-    function getCurrentTimestamp() {
-        var timestamp = new Date().getTime();
-        return timestamp;
-    }
 
+    /**-----------------------------------------------------------------**/
     /**
-     * 设置定时器，每隔一定时间发送异步请求
+     * 脑电信号处理开始
+     * @type {Array}
      */
-    getCyborgTemp(lastStartTime);
-    setInterval(function () {
-        // if(!drawing) {
-        getCyborgTemp(lastStartTime);
-        // }
-    }, ajaxInterval);
-    
-    
-
+    var eegDeltaTimeArray = [];
     var eegDeltaArray = [];
+    var eegThetaTimeArray = [];
     var eegThetaArray = [];
+    var eegLowalphaTimeArray = [];
     var eegLowalphaArray = [];
+    var eegHighalphaTimeArray = [];
     var eegHighalphaArray = [];
+    var eegLowbetaTimeArray = [];
     var eegLowbetaArray = [];
+    var eegHighbetaTimeArray = [];
     var eegHighbetaArray = [];
+    var eegLowgammaTimeArray = [];
     var eegLowgammaArray = [];
+    var eegMidgammaTimeArray = [];
     var eegMidgammaArray = [];
+    var eegAttentionTimeArray = [];
     var eegAttentionArray = [];
+    var eegMediationTimeArray = [];
     var eegMediationArray = [];
 
 
     /**
-     *实时获取电子人呼吸信号数据
+     *实时获取电子人脑电信号数据
      */
     function getCyborgEEG(startTime) {
         $.ajax({
@@ -509,7 +335,7 @@ $(document).ready(function () {
                 console.log(error.responseText);
             },
             success: function (e) {
-                if (e.code == 0) {
+                if (e.code === 0) {
                     // console.log(e.data)
                     var eegPacket = JSON.parse(e.data);
                     if (eegPacket.length > 0) {
@@ -541,785 +367,189 @@ $(document).ready(function () {
     }
 
 
-
     /**
-     * 根据获取得到的肌电信号的值重绘实时图
+     * 根据获取得到的脑电信号Delta波的值重绘实时图
      * @param value
      */
     function updateEEGDelta(value) {
         if (eegDeltaArray.length > dataSetLength) {
             eegDeltaArray = eegDeltaArray.slice(1);
+            eegDeltaTimeArray = eegDeltaArray.slice(1);
         }
-        if (eegDeltaArray.length === 0 || value.timestamp > eegDeltaArray[eegDeltaArray.length - 1][0]) {
-            eegDeltaArray.push([value.timestamp, value.eegDelta]);
+        if (eegDeltaArray.length === 0 || value.timestamp > eegDeltaTimeArray[eegDeltaTimeArray.length - 1]) {
+            eegDeltaArray.push(value.eegDelta);
+            eegDeltaTimeArray.push(value.timestamp);
             console.log("update " + value.timestamp + value.eegDelta);
-            $.plot($("#chartEEGDelta"), [{
-                data: eegDeltaArray,
-                label: "Sales"
-            }
-            ], {
-                series: {
-                    lines: {
-                        show: true,
-                        lineWidth: 2,
-                        fill: true,
-                        fillColor: {
-                            colors: [{
-                                opacity: 0.25
-                            }, {
-                                opacity: 0.25
-                            }
-                            ]
-                        }
-                    },
-                    points: {
-                        show: false
-                    },
-                    shadowSize: 2
-                },
-                legend: {
-                    show: false
-                },
-                grid: {
-                    labelMargin: 10,
-                    axisMargin: 500,
-                    hoverable: true,
-                    clickable: true,
-                    tickColor: "rgba(0,0,0,0.15)",
-                    borderWidth: 0
-                },
-                colors: ["#B450B2", "#4A8CF7", "#52e136"],
-                xaxis: {
-                    mode: "time",
-                    tickSize: [1, "second"],
-                    tickFormatter: function (v, axis) {
-                        var date = new Date(v);
-
-                        if (date.getSeconds() % 5 == 0) {
-                            var hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
-                            var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
-                            var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-
-                            return hours + ":" + minutes + ":" + seconds;
-                        } else {
-                            return "";
-                        }
-                    },
-                    axisLabel: "Time",
-                    axisLabelUseCanvas: true,
-                    axisLabelFontSizePixels: 12,
-                    axisLabelFontFamily: 'Verdana, Arial',
-                    axisLabelPadding: 10
-                },
-                yaxis: {
-                    ticks: 5,
-                    tickDecimals: 0
-                }
-            });
+            drawChart(eegDeltaTimeArray, eegDeltaArray, '脑电Delta波', 'Delta波', 'chartEEGDelta');
         }
     }
 
     /**
-     * 根据获取得到的肌电信号的值重绘实时图
+     * 根据获取得到的脑电信号Theta波的值重绘实时图
      * @param value
      */
     function updateEEGTheta(value) {
         if (eegThetaArray.length > dataSetLength) {
             eegThetaArray = eegThetaArray.slice(1);
+            eegThetaTimeArray = eegThetaTimeArray.slice(1);
         }
-        if (eegThetaArray.length === 0 || value.timestamp > eegThetaArray[eegThetaArray.length - 1][0]) {
-            eegThetaArray.push([value.timestamp, value.eegTheta]);
+        if (eegThetaArray.length === 0 || value.timestamp > eegThetaTimeArray[eegThetaTimeArray.length - 1]) {
+            eegThetaArray.push(value.eegTheta);
+            eegThetaTimeArray.push(value.timestamp);
             console.log("update " + value.timestamp + value.eegTheta);
-            $.plot($("#chartEEGTheta"), [{
-                data: eegThetaArray,
-                label: "Sales"
-            }
-            ], {
-                series: {
-                    lines: {
-                        show: true,
-                        lineWidth: 2,
-                        fill: true,
-                        fillColor: {
-                            colors: [{
-                                opacity: 0.25
-                            }, {
-                                opacity: 0.25
-                            }
-                            ]
-                        }
-                    },
-                    points: {
-                        show: false
-                    },
-                    shadowSize: 2
-                },
-                legend: {
-                    show: false
-                },
-                grid: {
-                    labelMargin: 10,
-                    axisMargin: 500,
-                    hoverable: true,
-                    clickable: true,
-                    tickColor: "rgba(0,0,0,0.15)",
-                    borderWidth: 0
-                },
-                colors: ["#B450B2", "#4A8CF7", "#52e136"],
-                xaxis: {
-                    mode: "time",
-                    tickSize: [1, "second"],
-                    tickFormatter: function (v, axis) {
-                        var date = new Date(v);
-
-                        if (date.getSeconds() % 5 == 0) {
-                            var hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
-                            var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
-                            var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-
-                            return hours + ":" + minutes + ":" + seconds;
-                        } else {
-                            return "";
-                        }
-                    },
-                    axisLabel: "Time",
-                    axisLabelUseCanvas: true,
-                    axisLabelFontSizePixels: 12,
-                    axisLabelFontFamily: 'Verdana, Arial',
-                    axisLabelPadding: 10
-                },
-                yaxis: {
-                    ticks: 5,
-                    tickDecimals: 0
-                }
-            });
+            drawChart(eegThetaTimeArray, eegThetaArray, '脑电Theta波', 'Theta波', 'chartEEGTheta');
         }
     }
 
     /**
-     * 根据获取得到的肌电信号的值重绘实时图
+     * 根据获取得到的脑电信号Lowalpha波的值重绘实时图
      * @param value
      */
     function updateEEGLowalpha(value) {
         if (eegLowalphaArray.length > dataSetLength) {
             eegLowalphaArray = eegLowalphaArray.slice(1);
+            eegLowalphaTimeArray = eegLowalphaTimeArray.slice(1);
         }
-        if (eegLowalphaArray.length === 0 || value.timestamp > eegLowalphaArray[eegLowalphaArray.length - 1][0]) {
-            eegLowalphaArray.push([value.timestamp, value.eegLowalpha]);
+        if (eegLowalphaArray.length === 0 || value.timestamp > eegLowalphaTimeArray[eegLowalphaTimeArray.length - 1]) {
+            eegLowalphaArray.push(value.eegLowalpha);
+            eegLowalphaTimeArray.push(value.timestamp);
             console.log("update " + value.timestamp + value.eegLowalpha);
-            $.plot($("#chartEEGLowalpha"), [{
-                data: eegLowalphaArray,
-                label: "Sales"
-            }
-            ], {
-                series: {
-                    lines: {
-                        show: true,
-                        lineWidth: 2,
-                        fill: true,
-                        fillColor: {
-                            colors: [{
-                                opacity: 0.25
-                            }, {
-                                opacity: 0.25
-                            }
-                            ]
-                        }
-                    },
-                    points: {
-                        show: false
-                    },
-                    shadowSize: 2
-                },
-                legend: {
-                    show: false
-                },
-                grid: {
-                    labelMargin: 10,
-                    axisMargin: 500,
-                    hoverable: true,
-                    clickable: true,
-                    tickColor: "rgba(0,0,0,0.15)",
-                    borderWidth: 0
-                },
-                colors: ["#B450B2", "#4A8CF7", "#52e136"],
-                xaxis: {
-                    mode: "time",
-                    tickSize: [1, "second"],
-                    tickFormatter: function (v, axis) {
-                        var date = new Date(v);
-
-                        if (date.getSeconds() % 5 == 0) {
-                            var hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
-                            var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
-                            var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-
-                            return hours + ":" + minutes + ":" + seconds;
-                        } else {
-                            return "";
-                        }
-                    },
-                    axisLabel: "Time",
-                    axisLabelUseCanvas: true,
-                    axisLabelFontSizePixels: 12,
-                    axisLabelFontFamily: 'Verdana, Arial',
-                    axisLabelPadding: 10
-                },
-                yaxis: {
-                    ticks: 5,
-                    tickDecimals: 0
-                }
-            });
+            drawChart(eegLowalphaTimeArray, eegLowalphaArray, '脑电Lowalpha波', 'Lowalpha波', 'chartEEGLowalpha');
         }
     }
 
     /**
-     * 根据获取得到的肌电信号的值重绘实时图
+     * 根据获取得到的脑电信号Highalpha波的值重绘实时图
      * @param value
      */
     function updateEEGHighalpha(value) {
         if (eegHighalphaArray.length > dataSetLength) {
             eegHighalphaArray = eegHighalphaArray.slice(1);
+            eegHighalphaTimeArray = eegHighalphaTimeArray.slice(1);
         }
-        if (eegHighalphaArray.length === 0 || value.timestamp > eegHighalphaArray[eegHighalphaArray.length - 1][0]) {
-            eegHighalphaArray.push([value.timestamp, value.eegHighalpha]);
+        if (eegHighalphaArray.length === 0 || value.timestamp > eegHighalphaTimeArray[eegHighalphaTimeArray.length - 1]) {
+            eegHighalphaArray.push(value.eegHighalpha);
+            eegHighalphaTimeArray.push(value.timestamp);
             console.log("update " + value.timestamp + value.eegHighalpha);
-            $.plot($("#chartEEGHighalpha"), [{
-                data: eegHighalphaArray,
-                label: "Sales"
-            }
-            ], {
-                series: {
-                    lines: {
-                        show: true,
-                        lineWidth: 2,
-                        fill: true,
-                        fillColor: {
-                            colors: [{
-                                opacity: 0.25
-                            }, {
-                                opacity: 0.25
-                            }
-                            ]
-                        }
-                    },
-                    points: {
-                        show: false
-                    },
-                    shadowSize: 2
-                },
-                legend: {
-                    show: false
-                },
-                grid: {
-                    labelMargin: 10,
-                    axisMargin: 500,
-                    hoverable: true,
-                    clickable: true,
-                    tickColor: "rgba(0,0,0,0.15)",
-                    borderWidth: 0
-                },
-                colors: ["#B450B2", "#4A8CF7", "#52e136"],
-                xaxis: {
-                    mode: "time",
-                    tickSize: [1, "second"],
-                    tickFormatter: function (v, axis) {
-                        var date = new Date(v);
-
-                        if (date.getSeconds() % 5 == 0) {
-                            var hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
-                            var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
-                            var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-
-                            return hours + ":" + minutes + ":" + seconds;
-                        } else {
-                            return "";
-                        }
-                    },
-                    axisLabel: "Time",
-                    axisLabelUseCanvas: true,
-                    axisLabelFontSizePixels: 12,
-                    axisLabelFontFamily: 'Verdana, Arial',
-                    axisLabelPadding: 10
-                },
-                yaxis: {
-                    ticks: 5,
-                    tickDecimals: 0
-                }
-            });
+            drawChart(eegHighalphaTimeArray, eegHighalphaArray, '脑电Highalpha波', 'Highalpha波', 'chartEEGHighalpha');
         }
     }
 
     /**
-     * 根据获取得到的肌电信号的值重绘实时图
+     * 根据获取得到的脑电信号Lowbeta波的值重绘实时图
      * @param value
      */
     function updateEEGLowbeta(value) {
         if (eegLowbetaArray.length > dataSetLength) {
             eegLowbetaArray = eegLowbetaArray.slice(1);
+            eegLowbetaTimeArray = eegLowbetaTimeArray.slice(1);
         }
-        if (eegLowbetaArray.length === 0 || value.timestamp > eegLowbetaArray[eegLowbetaArray.length - 1][0]) {
-            eegLowbetaArray.push([value.timestamp, value.eegLowbeta]);
+        if (eegLowbetaArray.length === 0 || value.timestamp > eegLowbetaTimeArray[eegLowbetaTimeArray.length - 1]) {
+            eegLowbetaArray.push(value.eegLowbeta);
+            eegLowbetaTimeArray.push(value.timestamp);
             console.log("update " + value.timestamp + value.eegLowbeta);
-            $.plot($("#chartEEGLowbeta"), [{
-                data: eegLowbetaArray,
-                label: "Sales"
-            }
-            ], {
-                series: {
-                    lines: {
-                        show: true,
-                        lineWidth: 2,
-                        fill: true,
-                        fillColor: {
-                            colors: [{
-                                opacity: 0.25
-                            }, {
-                                opacity: 0.25
-                            }
-                            ]
-                        }
-                    },
-                    points: {
-                        show: false
-                    },
-                    shadowSize: 2
-                },
-                legend: {
-                    show: false
-                },
-                grid: {
-                    labelMargin: 10,
-                    axisMargin: 500,
-                    hoverable: true,
-                    clickable: true,
-                    tickColor: "rgba(0,0,0,0.15)",
-                    borderWidth: 0
-                },
-                colors: ["#B450B2", "#4A8CF7", "#52e136"],
-                xaxis: {
-                    mode: "time",
-                    tickSize: [1, "second"],
-                    tickFormatter: function (v, axis) {
-                        var date = new Date(v);
-
-                        if (date.getSeconds() % 5 == 0) {
-                            var hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
-                            var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
-                            var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-
-                            return hours + ":" + minutes + ":" + seconds;
-                        } else {
-                            return "";
-                        }
-                    },
-                    axisLabel: "Time",
-                    axisLabelUseCanvas: true,
-                    axisLabelFontSizePixels: 12,
-                    axisLabelFontFamily: 'Verdana, Arial',
-                    axisLabelPadding: 10
-                },
-                yaxis: {
-                    ticks: 5,
-                    tickDecimals: 0
-                }
-            });
+            drawChart(eegLowbetaTimeArray, eegLowbetaArray, '脑电Lowbeta波', 'Lowbeta波', 'chartEEGLowbeta');
         }
     }
 
     /**
-     * 根据获取得到的肌电信号的值重绘实时图
+     * 根据获取得到的脑电信号Highbeta波的值重绘实时图
      * @param value
      */
     function updateEEGHighbeta(value) {
         if (eegHighbetaArray.length > dataSetLength) {
             eegHighbetaArray = eegHighbetaArray.slice(1);
+            eegHighbetaTimeArray = eegHighbetaTimeArray.slice(1);
         }
-        if (eegHighbetaArray.length === 0 || value.timestamp > eegHighbetaArray[eegHighbetaArray.length - 1][0]) {
-            eegHighbetaArray.push([value.timestamp, value.eegHighbeta]);
+        if (eegHighbetaArray.length === 0 || value.timestamp > eegHighbetaTimeArray[eegHighbetaTimeArray.length - 1]) {
+            eegHighbetaArray.push(value.eegHighbeta);
+            eegHighbetaTimeArray.push(value.timestamp);
             console.log("update " + value.timestamp + value.eegHighbeta);
-            $.plot($("#chartEEGHighbeta"), [{
-                data: eegHighbetaArray,
-                label: "Sales"
-            }
-            ], {
-                series: {
-                    lines: {
-                        show: true,
-                        lineWidth: 2,
-                        fill: true,
-                        fillColor: {
-                            colors: [{
-                                opacity: 0.25
-                            }, {
-                                opacity: 0.25
-                            }
-                            ]
-                        }
-                    },
-                    points: {
-                        show: false
-                    },
-                    shadowSize: 2
-                },
-                legend: {
-                    show: false
-                },
-                grid: {
-                    labelMargin: 10,
-                    axisMargin: 500,
-                    hoverable: true,
-                    clickable: true,
-                    tickColor: "rgba(0,0,0,0.15)",
-                    borderWidth: 0
-                },
-                colors: ["#B450B2", "#4A8CF7", "#52e136"],
-                xaxis: {
-                    mode: "time",
-                    tickSize: [1, "second"],
-                    tickFormatter: function (v, axis) {
-                        var date = new Date(v);
-
-                        if (date.getSeconds() % 5 == 0) {
-                            var hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
-                            var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
-                            var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-
-                            return hours + ":" + minutes + ":" + seconds;
-                        } else {
-                            return "";
-                        }
-                    },
-                    axisLabel: "Time",
-                    axisLabelUseCanvas: true,
-                    axisLabelFontSizePixels: 12,
-                    axisLabelFontFamily: 'Verdana, Arial',
-                    axisLabelPadding: 10
-                },
-                yaxis: {
-                    ticks: 5,
-                    tickDecimals: 0
-                }
-            });
+            drawChart(eegHighbetaTimeArray, eegHighbetaArray, '脑电Highbeta波', 'Highbeta波', 'chartEEGHighbeta');
         }
     }
 
     /**
-     * 根据获取得到的肌电信号的值重绘实时图
+     * 根据获取得到的脑电信号Lowgamma波的值重绘实时图
      * @param value
      */
     function updateEEGLowgamma(value) {
         if (eegLowgammaArray.length > dataSetLength) {
             eegLowgammaArray = eegLowgammaArray.slice(1);
+            eegLowgammaTimeArray = eegLowgammaTimeArray.slice(1);
         }
-        if (eegLowgammaArray.length === 0 || value.timestamp > eegLowgammaArray[eegLowgammaArray.length - 1][0]) {
-            eegLowgammaArray.push([value.timestamp, value.eegLowgamma]);
+        if (eegLowgammaArray.length === 0 || value.timestamp > eegLowgammaTimeArray[eegLowgammaTimeArray.length - 1]) {
+            eegLowgammaArray.push(value.eegLowgamma);
+            eegLowgammaTimeArray.push(value.timestamp);
             console.log("update " + value.timestamp + value.eegLowgamma);
-            $.plot($("#chartEEGLowgamma"), [{
-                data: eegLowgammaArray,
-                label: "Sales"
-            }
-            ], {
-                series: {
-                    lines: {
-                        show: true,
-                        lineWidth: 2,
-                        fill: true,
-                        fillColor: {
-                            colors: [{
-                                opacity: 0.25
-                            }, {
-                                opacity: 0.25
-                            }
-                            ]
-                        }
-                    },
-                    points: {
-                        show: false
-                    },
-                    shadowSize: 2
-                },
-                legend: {
-                    show: false
-                },
-                grid: {
-                    labelMargin: 10,
-                    axisMargin: 500,
-                    hoverable: true,
-                    clickable: true,
-                    tickColor: "rgba(0,0,0,0.15)",
-                    borderWidth: 0
-                },
-                colors: ["#B450B2", "#4A8CF7", "#52e136"],
-                xaxis: {
-                    mode: "time",
-                    tickSize: [1, "second"],
-                    tickFormatter: function (v, axis) {
-                        var date = new Date(v);
-
-                        if (date.getSeconds() % 5 == 0) {
-                            var hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
-                            var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
-                            var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-
-                            return hours + ":" + minutes + ":" + seconds;
-                        } else {
-                            return "";
-                        }
-                    },
-                    axisLabel: "Time",
-                    axisLabelUseCanvas: true,
-                    axisLabelFontSizePixels: 12,
-                    axisLabelFontFamily: 'Verdana, Arial',
-                    axisLabelPadding: 10
-                },
-                yaxis: {
-                    ticks: 5,
-                    tickDecimals: 0
-                }
-            });
+            drawChart(eegLowgammaTimeArray, eegLowgammaArray, '脑电Lowgamma波', 'Lowgamma波', 'chartEEGLowgamma');
         }
     }
 
     /**
-     * 根据获取得到的肌电信号的值重绘实时图
+     * 根据获取得到的脑电信号Midgamma波的值重绘实时图
      * @param value
      */
     function updateEEGMidgamma(value) {
         if (eegMidgammaArray.length > dataSetLength) {
             eegMidgammaArray = eegMidgammaArray.slice(1);
+            eegMidgammaTimeArray = eegMidgammaTimeArray.slice(1);
         }
-        if (eegMidgammaArray.length === 0 || value.timestamp > eegMidgammaArray[eegMidgammaArray.length - 1][0]) {
-            eegMidgammaArray.push([value.timestamp, value.eegMidgamma]);
+        if (eegMidgammaArray.length === 0 || value.timestamp > eegMidgammaTimeArray[eegMidgammaTimeArray.length - 1]) {
+            eegMidgammaArray.push(value.eegMidgamma);
+            eegMidgammaTimeArray.push(value.timestamp);
             console.log("update " + value.timestamp + value.eegMidgamma);
-            $.plot($("#chartEEGMidgamma"), [{
-                data: eegMidgammaArray,
-                label: "Sales"
-            }
-            ], {
-                series: {
-                    lines: {
-                        show: true,
-                        lineWidth: 2,
-                        fill: true,
-                        fillColor: {
-                            colors: [{
-                                opacity: 0.25
-                            }, {
-                                opacity: 0.25
-                            }
-                            ]
-                        }
-                    },
-                    points: {
-                        show: false
-                    },
-                    shadowSize: 2
-                },
-                legend: {
-                    show: false
-                },
-                grid: {
-                    labelMargin: 10,
-                    axisMargin: 500,
-                    hoverable: true,
-                    clickable: true,
-                    tickColor: "rgba(0,0,0,0.15)",
-                    borderWidth: 0
-                },
-                colors: ["#B450B2", "#4A8CF7", "#52e136"],
-                xaxis: {
-                    mode: "time",
-                    tickSize: [1, "second"],
-                    tickFormatter: function (v, axis) {
-                        var date = new Date(v);
-
-                        if (date.getSeconds() % 5 == 0) {
-                            var hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
-                            var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
-                            var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-
-                            return hours + ":" + minutes + ":" + seconds;
-                        } else {
-                            return "";
-                        }
-                    },
-                    axisLabel: "Time",
-                    axisLabelUseCanvas: true,
-                    axisLabelFontSizePixels: 12,
-                    axisLabelFontFamily: 'Verdana, Arial',
-                    axisLabelPadding: 10
-                },
-                yaxis: {
-                    ticks: 5,
-                    tickDecimals: 0
-                }
-            });
+            drawChart(eegMidgammaTimeArray, eegMidgammaArray, '脑电Midgamma波', 'Midgamma波', 'chartEEGMidgamma');
         }
     }
 
     /**
-     * 根据获取得到的肌电信号的值重绘实时图
+     * 根据获取得到的脑电信号专注度的值重绘实时图
      * @param value
      */
     function updateEEGAttention(value) {
         if (eegAttentionArray.length > dataSetLength) {
             eegAttentionArray = eegAttentionArray.slice(1);
+            eegAttentionTimeArray = eegAttentionTimeArray.slice(1);
         }
-        if (eegAttentionArray.length === 0 || value.timestamp > eegAttentionArray[eegAttentionArray.length - 1][0]) {
-            eegAttentionArray.push([value.timestamp, value.eegAttention]);
+        if (eegAttentionArray.length === 0 || value.timestamp > eegAttentionTimeArray[eegAttentionTimeArray.length - 1]) {
+            eegAttentionArray.push(value.eegAttention);
+            eegAttentionTimeArray.push(value.timestamp);
             console.log("update " + value.timestamp + value.eegAttention);
-            $.plot($("#chartEEGAttention"), [{
-                data: eegAttentionArray,
-                label: "Sales"
-            }
-            ], {
-                series: {
-                    lines: {
-                        show: true,
-                        lineWidth: 2,
-                        fill: true,
-                        fillColor: {
-                            colors: [{
-                                opacity: 0.25
-                            }, {
-                                opacity: 0.25
-                            }
-                            ]
-                        }
-                    },
-                    points: {
-                        show: false
-                    },
-                    shadowSize: 2
-                },
-                legend: {
-                    show: false
-                },
-                grid: {
-                    labelMargin: 10,
-                    axisMargin: 500,
-                    hoverable: true,
-                    clickable: true,
-                    tickColor: "rgba(0,0,0,0.15)",
-                    borderWidth: 0
-                },
-                colors: ["#B450B2", "#4A8CF7", "#52e136"],
-                xaxis: {
-                    mode: "time",
-                    tickSize: [1, "second"],
-                    tickFormatter: function (v, axis) {
-                        var date = new Date(v);
-
-                        if (date.getSeconds() % 5 == 0) {
-                            var hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
-                            var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
-                            var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-
-                            return hours + ":" + minutes + ":" + seconds;
-                        } else {
-                            return "";
-                        }
-                    },
-                    axisLabel: "Time",
-                    axisLabelUseCanvas: true,
-                    axisLabelFontSizePixels: 12,
-                    axisLabelFontFamily: 'Verdana, Arial',
-                    axisLabelPadding: 10
-                },
-                yaxis: {
-                    ticks: 5,
-                    tickDecimals: 0
-                }
-            });
+            drawChart(eegAttentionTimeArray, eegAttentionArray, '脑电专注度', '专注度', 'chartEEGAttention');
         }
     }
 
     /**
-     * 根据获取得到的肌电信号的值重绘实时图
+     * 根据获取得到的脑电信号冥想度的值重绘实时图
      * @param value
      */
     function updateEEGMediation(value) {
         if (eegMediationArray.length > dataSetLength) {
             eegMediationArray = eegMediationArray.slice(1);
+            eegMediationTimeArray = eegMediationTimeArray.slice(1);
         }
-        if (eegMediationArray.length === 0 || value.timestamp > eegMediationArray[eegMediationArray.length - 1][0]) {
-            eegMediationArray.push([value.timestamp, value.eegMediation]);
+        if (eegMediationArray.length === 0 || value.timestamp > eegMediationTimeArray[eegMediationTimeArray.length - 1]) {
+            eegMediationArray.push(value.eegMediation);
+            eegMediationTimeArray.push(value.timestamp);
             console.log("update " + value.timestamp + value.eegMediation);
-            $.plot($("#chartEEGMediation"), [{
-                data: eegMediationArray,
-                label: "Sales"
-            }
-            ], {
-                series: {
-                    lines: {
-                        show: true,
-                        lineWidth: 2,
-                        fill: true,
-                        fillColor: {
-                            colors: [{
-                                opacity: 0.25
-                            }, {
-                                opacity: 0.25
-                            }
-                            ]
-                        }
-                    },
-                    points: {
-                        show: false
-                    },
-                    shadowSize: 2
-                },
-                legend: {
-                    show: false
-                },
-                grid: {
-                    labelMargin: 10,
-                    axisMargin: 500,
-                    hoverable: true,
-                    clickable: true,
-                    tickColor: "rgba(0,0,0,0.15)",
-                    borderWidth: 0
-                },
-                colors: ["#B450B2", "#4A8CF7", "#52e136"],
-                xaxis: {
-                    mode: "time",
-                    tickSize: [1, "second"],
-                    tickFormatter: function (v, axis) {
-                        var date = new Date(v);
-
-                        if (date.getSeconds() % 5 == 0) {
-                            var hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
-                            var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
-                            var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-
-                            return hours + ":" + minutes + ":" + seconds;
-                        } else {
-                            return "";
-                        }
-                    },
-                    axisLabel: "Time",
-                    axisLabelUseCanvas: true,
-                    axisLabelFontSizePixels: 12,
-                    axisLabelFontFamily: 'Verdana, Arial',
-                    axisLabelPadding: 10
-                },
-                yaxis: {
-                    ticks: 5,
-                    tickDecimals: 0
-                }
-            });
+            drawChart(eegMediationTimeArray, eegMediationArray, '脑电冥想度', '冥想度', 'chartEEGMediation');
         }
     }
-
 
 
     /**
      * 设置定时器，每隔一定时间发送异步请求
      */
+    getCyborgEMG(lastStartTime);
+    getCyborgRR(lastStartTime);
+    getCyborgTemp(lastStartTime);
     getCyborgEEG(lastStartTime);
     setInterval(function () {
         // if(!drawing) {
+        getCyborgEMG(lastStartTime);
+        getCyborgRR(lastStartTime);
+        getCyborgTemp(lastStartTime);
         getCyborgEEG(lastStartTime);
         // }
     }, ajaxInterval);
