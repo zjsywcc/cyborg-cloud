@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zn"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<!--页头 start-->
+<head>
+    <div th:replace="common/header2:: common_header"></div>
+
+</head>
+<!--页头 end-->
+<body>
+<!-- Fixed navbar -->
+<div th:include="common/navbar:: common_navbar"></div>
+
+<div id="cl-wrapper">
+    <div th:replace="common/sidebar:: common_sidebar"></div>
+
+
+    <!--content-start-->
+    <div class="container-fluid" id="pcont">
+
+        <div class="page-head">
+            <h2>电子人统计数据</h2>
+            <ol class="breadcrumb">
+                <li><a href="#">电子人统计</a></li>
+                <li class="active"><a href="#">电子人统计数据</a></li>
+            </ol>
+        </div>
+        <div class="cl-mcont">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="block-flat">
+                        <div class="header">
+                            <h3>电子人统计数据</h3>
+                        </div>
+                        <div class="content">
+                            <!--<div class="block-flat" style="float: left;height: 349px">-->
+                            <div style="width: 500px">
+
+                                <div class="form-group">
+                                    <label class="control-label">统计内容:</label>
+                                    <select class="select2" id="item6">
+                                        <option value="疲劳判断准确度" selected="">疲劳判断准确度</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">选择日期:</label>
+                                    <div class="input-group date datetime" data-min-view="2"
+                                         data-date-format="yyyy-mm-dd">
+                                        <input id="date6" type="text" class="form-control" size="2" width="240px"/>
+                                        <span class="input-group-addon btn btn-primary">
+                                    <span class="glyphicon glyphicon-th">
+                                    </span>
+                                    </span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">粒度</label>
+                                    <select class="select2" id="danwei6">
+                                        <option value="小时">小时</option>
+                                        <option value="天">天</option>
+                                    </select>
+                                </div>
+
+                            </div>
+
+                            <button class="btn btn-primary" data-dismiss="modal" type="button"
+                                    style="align-self: center"
+                                    onclick="show()">确定
+                            </button>
+
+                            <hr/>
+                            <!--<div class="col-md-12">-->
+                            <!--<div class="block-flat">-->
+                            <!--<div class="content">-->
+                            <div class="widget-block">
+                                <div class="white-box padding">
+                                    <div class="row info">
+                                        <div>
+                                            <h3>统计数据</h3>
+                                        </div>
+                                        <div>
+                                            <div id="com_stats" style="height:500px;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--</div>-->
+                        <!--</div>-->
+
+                        <!--<div class="content">-->
+                        <!--<div id="StatisticChart" style="height: 230px; padding: 0px; position: relative;"></div>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                        <!--</div>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+
+    <!--遮罩-->
+    <div class="md-overlay"></div>
+
+
+</div>
+<!--页脚 start-->
+<div th:include="common/foot2:: common_foot"></div>
+<!--页脚 end-->
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts.min.js"></script>
+
+<!--<script type="text/javascript">-->
+
+
+<!--</script>-->
+
+
+<!--myjs-->
+<script src="../myjs/stat/stat.js"></script>
+
+</body>
+</html>
