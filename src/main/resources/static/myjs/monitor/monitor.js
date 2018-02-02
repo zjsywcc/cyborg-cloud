@@ -42,7 +42,7 @@ $(document).ready(function () {
             },
             success: function (e) {
                 if (e.code === 0) {
-                    console.log(e.data);
+                    // console.log(e.data);
                     var packet = JSON.parse(e.data);
                     if (packet.length > 0) {
                         refreshLoop(updateFunction, packet, packet.length);
@@ -80,7 +80,7 @@ $(document).ready(function () {
          */
         var interv = function () {
             // drawing = true;
-            console.log(array[index].timestamp);
+            // console.log(array[index].timestamp);
             func(array[index]);
             var now = array[index].timestamp;
             index++;
@@ -176,7 +176,8 @@ $(document).ready(function () {
                         normal: {
                             color: '#1da2d4'
                         }
-                    }
+                    },
+                    areaStyle: {}
                 }
             ]
         };
@@ -200,16 +201,9 @@ $(document).ready(function () {
             emgTimeArray = emgTimeArray.slice(1);
         }
         if (emgArray.length === 0 || value.timestamp > emgTimeArray[emgTimeArray.length - 1]) {
-            console.log("push emgValue " + value.emgValue);
             emgArray.push(value.emgValue);
             emgTimeArray.push(value.timestamp);
-            console.log("update emgValue" + value.timestamp + " " + value.emgValue);
-            console.log("emgArray print " + emgArray);
-            console.log("emgTimeArray print " + emgTimeArray);
             drawChart(emgTimeArray, emgArray, '放大后的肌电信号', '电压', 'chartEMG');
-        } else {
-            console.log("emgArray Length " + emgArray.length);
-            console.log("emgTimestamp " + value.timestamp + " --- " + "emgTimeArray last timestamp " + emgTimeArray[emgTimeArray.length - 1]);
         }
     }
 
@@ -252,7 +246,6 @@ $(document).ready(function () {
         if (rrArray.length === 0 || value.timestamp > rrTimeArray[rrTimeArray.length - 1]) {
             rrArray.push(value.rrValue);
             rrTimeArray.push(value.timestamp);
-            console.log("update " + value.timestamp + value.rrValue);
             drawChart(rrTimeArray, rrArray, '放大后的呼吸信号', '呼吸压', 'chartRR');
         }
     }
@@ -286,7 +279,6 @@ $(document).ready(function () {
         if (tempArray.length === 0 || value.timestamp > tempTimeArray[tempTimeArray.length - 1]) {
             tempArray.push(value.tempValue);
             tempTimeArray.push(value.timestamp);
-            console.log("update " + value.timestamp + value.tempValue);
             drawChart(tempTimeArray, tempArray, '体温信号', '温度', 'chartTemp');
         }
     }
@@ -340,8 +332,6 @@ $(document).ready(function () {
                     var eegPacket = JSON.parse(e.data);
                     if (eegPacket.length > 0) {
                         // lastStartTime = eegPacket[eegPacket.length - 1].timestamp - dataSetLength * dataInterval;
-                        console.log("eegPacket");
-                        console.log(eegPacket);
                         refreshLoop(updateEEGDelta, eegPacket, eegPacket.length);
                         refreshLoop(updateEEGTheta, eegPacket, eegPacket.length);
                         refreshLoop(updateEEGLowalpha, eegPacket, eegPacket.length);
@@ -379,7 +369,6 @@ $(document).ready(function () {
         if (eegDeltaArray.length === 0 || value.timestamp > eegDeltaTimeArray[eegDeltaTimeArray.length - 1]) {
             eegDeltaArray.push(value.eegDelta);
             eegDeltaTimeArray.push(value.timestamp);
-            console.log("update " + value.timestamp + value.eegDelta);
             drawChart(eegDeltaTimeArray, eegDeltaArray, '脑电Delta波', 'Delta波', 'chartEEGDelta');
         }
     }
@@ -396,7 +385,6 @@ $(document).ready(function () {
         if (eegThetaArray.length === 0 || value.timestamp > eegThetaTimeArray[eegThetaTimeArray.length - 1]) {
             eegThetaArray.push(value.eegTheta);
             eegThetaTimeArray.push(value.timestamp);
-            console.log("update " + value.timestamp + value.eegTheta);
             drawChart(eegThetaTimeArray, eegThetaArray, '脑电Theta波', 'Theta波', 'chartEEGTheta');
         }
     }
@@ -413,7 +401,6 @@ $(document).ready(function () {
         if (eegLowalphaArray.length === 0 || value.timestamp > eegLowalphaTimeArray[eegLowalphaTimeArray.length - 1]) {
             eegLowalphaArray.push(value.eegLowalpha);
             eegLowalphaTimeArray.push(value.timestamp);
-            console.log("update " + value.timestamp + value.eegLowalpha);
             drawChart(eegLowalphaTimeArray, eegLowalphaArray, '脑电Lowalpha波', 'Lowalpha波', 'chartEEGLowalpha');
         }
     }
@@ -430,7 +417,6 @@ $(document).ready(function () {
         if (eegHighalphaArray.length === 0 || value.timestamp > eegHighalphaTimeArray[eegHighalphaTimeArray.length - 1]) {
             eegHighalphaArray.push(value.eegHighalpha);
             eegHighalphaTimeArray.push(value.timestamp);
-            console.log("update " + value.timestamp + value.eegHighalpha);
             drawChart(eegHighalphaTimeArray, eegHighalphaArray, '脑电Highalpha波', 'Highalpha波', 'chartEEGHighalpha');
         }
     }
@@ -447,7 +433,6 @@ $(document).ready(function () {
         if (eegLowbetaArray.length === 0 || value.timestamp > eegLowbetaTimeArray[eegLowbetaTimeArray.length - 1]) {
             eegLowbetaArray.push(value.eegLowbeta);
             eegLowbetaTimeArray.push(value.timestamp);
-            console.log("update " + value.timestamp + value.eegLowbeta);
             drawChart(eegLowbetaTimeArray, eegLowbetaArray, '脑电Lowbeta波', 'Lowbeta波', 'chartEEGLowbeta');
         }
     }
@@ -464,7 +449,6 @@ $(document).ready(function () {
         if (eegHighbetaArray.length === 0 || value.timestamp > eegHighbetaTimeArray[eegHighbetaTimeArray.length - 1]) {
             eegHighbetaArray.push(value.eegHighbeta);
             eegHighbetaTimeArray.push(value.timestamp);
-            console.log("update " + value.timestamp + value.eegHighbeta);
             drawChart(eegHighbetaTimeArray, eegHighbetaArray, '脑电Highbeta波', 'Highbeta波', 'chartEEGHighbeta');
         }
     }
@@ -481,7 +465,6 @@ $(document).ready(function () {
         if (eegLowgammaArray.length === 0 || value.timestamp > eegLowgammaTimeArray[eegLowgammaTimeArray.length - 1]) {
             eegLowgammaArray.push(value.eegLowgamma);
             eegLowgammaTimeArray.push(value.timestamp);
-            console.log("update " + value.timestamp + value.eegLowgamma);
             drawChart(eegLowgammaTimeArray, eegLowgammaArray, '脑电Lowgamma波', 'Lowgamma波', 'chartEEGLowgamma');
         }
     }
@@ -498,7 +481,6 @@ $(document).ready(function () {
         if (eegMidgammaArray.length === 0 || value.timestamp > eegMidgammaTimeArray[eegMidgammaTimeArray.length - 1]) {
             eegMidgammaArray.push(value.eegMidgamma);
             eegMidgammaTimeArray.push(value.timestamp);
-            console.log("update " + value.timestamp + value.eegMidgamma);
             drawChart(eegMidgammaTimeArray, eegMidgammaArray, '脑电Midgamma波', 'Midgamma波', 'chartEEGMidgamma');
         }
     }
@@ -515,7 +497,6 @@ $(document).ready(function () {
         if (eegAttentionArray.length === 0 || value.timestamp > eegAttentionTimeArray[eegAttentionTimeArray.length - 1]) {
             eegAttentionArray.push(value.eegAttention);
             eegAttentionTimeArray.push(value.timestamp);
-            console.log("update " + value.timestamp + value.eegAttention);
             drawChart(eegAttentionTimeArray, eegAttentionArray, '脑电专注度', '专注度', 'chartEEGAttention');
         }
     }
@@ -532,7 +513,6 @@ $(document).ready(function () {
         if (eegMediationArray.length === 0 || value.timestamp > eegMediationTimeArray[eegMediationTimeArray.length - 1]) {
             eegMediationArray.push(value.eegMediation);
             eegMediationTimeArray.push(value.timestamp);
-            console.log("update " + value.timestamp + value.eegMediation);
             drawChart(eegMediationTimeArray, eegMediationArray, '脑电冥想度', '冥想度', 'chartEEGMediation');
         }
     }
