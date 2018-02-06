@@ -72,6 +72,18 @@ public class MonitorEEGInfoServiceImpl implements MonitorEEGInfoService {
     }
 
     @Override
+    public MonitorEEGInfo findNewestEEGInfo() {
+        Query query = new Query();
+        query.with(new Sort(Sort.Direction.ASC, "timestamp"));
+        List<MonitorEEGInfo> eegInfos = monitorEEGInfoDao.findByQuery(query);
+        int eegSize = eegInfos.size();
+        if(eegSize == 0) {
+            return null;
+        }
+        return eegInfos.get(eegSize - 1);
+    }
+
+    @Override
     public List<MonitorEEGInfo> pageFind(int pageIndex, int pageSize) {
         Query query = new Query();
         query.skip(pageIndex);// skip相当于从那条记录开始

@@ -43,6 +43,9 @@ public interface MonitorEEGInfoService {
 
     public List<MonitorEEGInfo> findByIsReadAndUpdate(boolean isRead, long timestamp);
 
+
+    public MonitorEEGInfo findNewestEEGInfo();
+
     /**
      * 分页查询
      * @param pageIndex

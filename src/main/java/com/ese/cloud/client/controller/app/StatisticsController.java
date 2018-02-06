@@ -72,8 +72,8 @@ public class StatisticsController {
             for(int i = 0; i < 24; i++) {
                 StatInfo statInfo = new StatInfo();
                 statInfo.setHour(i);
-                statInfo.setAccuracy(Math.random() * 100);
-                statInfo.setTiming(Math.random() * 1200);
+                statInfo.setAccuracy(Math.random() * 20 + 70);
+                statInfo.setTiming(Math.random() * 400 + 800);
                 statInfos.add(statInfo);
             }
             System.out.println(statInfos);
